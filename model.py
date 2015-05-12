@@ -55,7 +55,8 @@ class Player(db.Model):
 
     player_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    legal_name = db.Column(db.String(50), nullable=False)
+    legal_fname = db.Column(db.String(50), nullable=True)
+    legal_lname = db.Column(db.String(50), nullable=True)
     number = db.Column(db.Integer, nullable=False)
     started = db.Column(db.Date, nullable=False)
     retired = db.Column(db.Date, nullable=True)
@@ -97,7 +98,39 @@ class Roster(db.Model):
 
         return "<Roster id=%s name=%s>" % (self.roster_id, self.team_id)
 
-#### TODO
+
+class League(db.Model):
+    """The League class."""
+
+    __tablename__ = "leagues"
+
+    league_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    affiliation = db.Column(db.String(50), nullable=False)
+    founded = db.Column(db.Date, nullable=False)
+    disbanded = db.Column(db.Date, nullable=True)
+    
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<League id=%s name=%s>" % (self.league_id, self.name)
+
+
+class Game(db.Model):
+    """The Game class."""
+
+    __tablename__ = "games"
+
+    game_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+
+    founded = db.Column(db.Date, nullable=False)
+    disbanded = db.Column(db.Date, nullable=True)
+    
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<League id=%s name=%s>" % (self.league_id, self.name)
+
 
 # End Part 1
 ##############################################################################
