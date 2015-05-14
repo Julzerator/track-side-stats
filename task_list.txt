@@ -1,0 +1,21 @@
+====Task List====
+
+This is the task list for the Project "Track Side Stats"
+
+===Working On===
+
+o- Stubbing out the server.py app for my Flask routes.
+o- Final few Wireframe views
+o- Setting up PostgreSQL
+
+
+===TODO===
+
+
+
+
+===DONE===
+
+x- Set-up all Tables in model.py
+x- Data model
+x- Application Flow
