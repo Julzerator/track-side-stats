@@ -6,14 +6,15 @@ This is the task list for the Project "Track Side Stats"
 
 o- Stubbing out the server.py app for my Flask routes.
 o- Final few Wireframe views
-o- Setting up PostgreSQL
-
 
 ===TODO===
 
 o- Set up controller.py with functions for each class.
 o- Go through the MVC tutorials
 o- Set up the __init__ for each class in model.py
+o- Set up forms with WTF forms.
+o- Create base jinja template for computer / web view
+o- Create base jinja template for full screen tablet view
 
 
 
@@ -22,3 +23,4 @@ o- Set up the __init__ for each class in model.py
 x- Set-up all Tables in model.py
 x- Data model
 x- Application Flow
+x- Setting up PostgreSQL
