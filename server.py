@@ -13,8 +13,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-app.config['SQL_ALCHEMY_DATABASE_URL'] = \
-    'postgresql://localhost/trackstats.db'
+
 
 
 # Required to use Flask sessions and the debug toolbar

@@ -8,7 +8,7 @@ from datetime import datetime
 # object, where we do most of our interactions (like committing, etc.)
 
 db = SQLAlchemy()
-
+    
 
 ##############################################################################
 # Part 1: Compose ORM
@@ -23,10 +23,10 @@ class User(db.Model):
     lname = db.Column(db.String(50), nullable=True)
     uname = db.Column(db.String(50), nullable=True)
     email = db.Column(db.String(50), nullable=False)
-    password = dbColumn(db.String(20), nullable=False)
-    fav_team = db.Column(db.Integer, nullable=True, db.ForeignKey('teams.team_id'))
+    password = db.Column(db.String(20), nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=True)
 
-    team_name = db.relationship('Team', backref=db.backref('teams'))
+    team = db.relationship('Team', backref=db.backref('teams'))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -40,11 +40,11 @@ class LeagueUser(db.Model):
     __tablename__ = "leagueusers"
     
     leause_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=True, db.ForeignKey('users.user_id'))
-    league_id = db.Column(db.Integer, nullable=True, db.ForeignKey('leagues.league_id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
+    league_id = db.Column(db.Integer, db.ForeignKey('leagues.league_id'), nullable=True)
     permission_lvl = db.Column(db.String(50), nullable=True)
 
-    user_name = db.relationship('User', backref=db.backref('users'))
+    user = db.relationship('User', backref=db.backref('users'))
     league_name = db.relationship('League', backref=db.backref('leagues'))
 
     def __repr__(self):
@@ -63,7 +63,7 @@ class Team(db.Model):
     t_type = db.Column(db.String(100), nullable=False)
     founded = db.Column(db.Date, nullable=False)
     disbanded = db.Column(db.Date, nullable=True)
-    league_id = db.Column(db.Integer, nullable=True, db.ForeignKey('leagues.league_id'))
+    league_id = db.Column(db.Integer, db.ForeignKey('leagues.league_id'), nullable=True)
     
     league_name = db.relationship('League', backref=db.backref('leagues'))
 
@@ -117,8 +117,8 @@ class TeamPlayer(db.Model):
     __tablename__ = "teamplayers"
     
     teapla_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    team_id = db.Column(db.Integer, nullable=True, db.ForeignKey('teams.team_id'))
-    player_id = db.Column(db.Integer, nullable=True, db.ForeignKey('players.player_id'))
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=True)
+    player_id = db.Column(db.Integer, db.ForeignKey('players.player_id'), nullable=True)
 
     team_name = db.relationship('Team', backref=db.backref('teams'))
     player_name = db.relationship('Player', backref=db.backref('players'))
@@ -154,8 +154,8 @@ class PersonPosition(db.Model):
     __tablename__ = "personpositions"
     
     perpos_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    player_id = db.Column(db.Integer, nullable=False, db.ForeignKey('players.player_id'))
-    position_id = db.Column(db.Integer, nullable=False, db.ForeignKey('positions.position_id'))
+    player_id = db.Column(db.Integer, db.ForeignKey('players.player_id'), nullable=False)
+    position_id = db.Column(db.Integer, db.ForeignKey('positions.position_id'), nullable=False)
 
     player_name = db.relationship('Player', backref=db.backref('players'))
     position_name = db.relationship('Position', backref=db.backref('positions'))
@@ -174,8 +174,8 @@ class Roster(db.Model):
     __tablename__ = "rosters"
 
     roster_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    team_id = db.Column(db.Integer, nullable=False, db.ForeignKey('teams.team_id'))
-    game_id = db.Column(db.Integer, nullable=False, db.ForeignKey('games.game_id'))
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=False)
+    game_id = db.Column(db.Integer, db.ForeignKey('games.game_id'), nullable=False)
     ord = db.Column(db.Integer, nullable=False)
     color = db.Column(db.Integer, nullable=False)
 
@@ -195,8 +195,8 @@ class RosterPlayer(db.Model):
     __tablename__ = "rosterplayers"
     
     rospla_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    roster_id = db.Column(db.Integer, nullable=True, db.ForeignKey('rosters.roster_id'))
-    player_id = db.Column(db.Integer, nullable=True, db.ForeignKey('players.player_id'))
+    roster_id = db.Column(db.Integer, db.ForeignKey('rosters.roster_id'), nullable=True)
+    player_id = db.Column(db.Integer, db.ForeignKey('players.player_id'), nullable=True)
 
     roster_info = db.relationship('Roster', backref=db.backref('rosters'))
     player_name = db.relationship('Player', backref=db.backref('players'))
@@ -233,15 +233,15 @@ class Jam(db.Model):
 
     __tablename__ = "jams"
 
-    jam_id = dbColumn(db.Integer, autoincrement=True, primary_key=True)
+    jam_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     period = db.Column(db.Integer, nullable=False)
-    j_start = db.Column(db.Datetime, nullable=True)
-    j_end = db.Column(db.Datetime, nullable=True)
+    j_start = db.Column(db.DateTime, nullable=True)
+    j_end = db.Column(db.DateTime, nullable=True)
     number = db.Column(db.Integer, nullable=True)
-    game_id = db.Column(db.Integer, nullable=False, db.ForeignKey('games.game_id'))
+    game_id = db.Column(db.Integer, db.ForeignKey('games.game_id'), nullable=False)
     timeout_type = db.Column(db.String(25), nullable=True)
-    t_start = db.Column(db.Datetime, nullable=True)
-    t_end = db.Column(db.Datetime, nullable=True)
+    t_start = db.Column(db.DateTime, nullable=True)
+    t_end = db.Column(db.DateTime, nullable=True)
 
     game_info = db.relationship('Game', backref=db.backref('games'))
 
@@ -258,9 +258,9 @@ class JamPosition(db.Model):
     __tablename__ = "jampositions"
     
     jampos_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    jam_id = db.Column(db.Integer, nullable=False, db.ForeignKey('jams.jam_id'))
-    position_id = db.Column(db.Integer, nullable=False, db.ForeignKey('positions.position_id'))
-    player_id = db.Column(db.Integer, nullable=False, db.ForeignKey('players.player_id'))
+    jam_id = db.Column(db.Integer, db.ForeignKey('jams.jam_id'), nullable=False)
+    position_id = db.Column(db.Integer, db.ForeignKey('positions.position_id'), nullable=False)
+    player_id = db.Column(db.Integer, db.ForeignKey('players.player_id'), nullable=False)
 
     jam_info = db.relationship('Jam', backref=db.backref('jams'))
     position_name = db.relationship('Position', backref=db.backref('positions'))
@@ -279,12 +279,12 @@ class Action(db.Model):
 
     __tablename__ = "actions"
 
-    action_id = dbColumn(db.Integer, autoincrement=True, primary_key=True)
-    jam_id = db.Column(db.Integer, nullable=False, db.ForeignKey('jams.jam_id'))
-    player_id = db.Column(db.Integer, nullable=False, db.ForeignKey('players.player_id'))
+    action_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    jam_id = db.Column(db.Integer, db.ForeignKey('jams.jam_id'), nullable=False)
+    player_id = db.Column(db.Integer, db.ForeignKey('players.player_id'), nullable=False)
     play = db.Column(db.String(20), nullable=False)
     points = db.Column(db.Integer, nullable=True)
-    timestamp = db.Column(db.Datetime, nullable=False)
+    timestamp = db.Column(db.DateTime, nullable=False)
 
     jam_info = db.relationship('Jam', backref=db.backref('jams'))
     player_name = db.relationship('Player', backref=db.backref('players'))
@@ -294,7 +294,7 @@ class Action(db.Model):
         """Provide helpful representation when printed."""
 
         return "<Action id=%s player_name=%s, play=%s>" % (self.action_id, 
-            self.player_name, self.play)    
+            self.player_name, self.number)    
 
 
 # End Part 1
@@ -306,7 +306,7 @@ def connect_to_db(app):
     """Connect the database to our Flask app."""
 
     # Configure to use our SQLite database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///derby.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/trackstats'
     app.config['SQLALCHEMY_ECHO'] = True
     db.app = app
     db.init_app(app)

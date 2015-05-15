@@ -11,6 +11,9 @@ o- Setting up PostgreSQL
 
 ===TODO===
 
+o- Set up controller.py with functions for each class.
+o- Go through the MVC tutorials
+o- Set up the __init__ for each class in model.py
 
 
 
