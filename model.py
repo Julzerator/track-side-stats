@@ -8,7 +8,7 @@ from datetime import datetime
 # object, where we do most of our interactions (like committing, etc.)
 
 db = SQLAlchemy()
-    
+
 
 ##############################################################################
 # Part 1: Compose ORM
@@ -17,21 +17,23 @@ class User(db.Model):
     """A User of the Track Side Stats that enters the data."""
 
     __tablename__ = "users"
-    
+
     user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     fname = db.Column(db.String(50), nullable=True)
     lname = db.Column(db.String(50), nullable=True)
     uname = db.Column(db.String(50), nullable=True)
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(20), nullable=False)
-    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=True)
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'),
+                        nullable=True)
 
     team = db.relationship('Team', backref=db.backref('teams'))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<User id=%s name=%s email=%s>" % (self.user_id, self.name, self.email)
+        return "<User id=%s name=%s email=%s>" % (self.user_id, 
+                                                 self.name, self.email)
 
 
 class LeagueUser(db.Model):
@@ -146,26 +148,6 @@ class League(db.Model):
         """Provide helpful representation when printed."""
 
         return "<League id=%s name=%s>" % (self.league_id, self.name)
-
-
-class PersonPosition(db.Model):
-    """A joiner table between Player or Official and Position."""
-
-    __tablename__ = "personpositions"
-    
-    perpos_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    player_id = db.Column(db.Integer, db.ForeignKey('players.player_id'), nullable=False)
-    position_id = db.Column(db.Integer, db.ForeignKey('positions.position_id'), nullable=False)
-
-    player_name = db.relationship('Player', backref=db.backref('players'))
-    position_name = db.relationship('Position', backref=db.backref('positions'))
-    
-
-    def __repr__(self):
-        """Provide helpful representation when printed."""
-
-        return "<PersonPosition id=%s player_name=%s position_name=%s >" % (self.perpos_id, 
-            self.player_name, self.position_name)
 
 
 class Roster(db.Model):
