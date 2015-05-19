@@ -42,8 +42,8 @@ class LeagueUser(db.Model):
     __tablename__ = "leagueusers"
     
     leause_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
-    league_id = db.Column(db.Integer, db.ForeignKey('leagues.league_id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    league_id = db.Column(db.Integer, db.ForeignKey('leagues.league_id'), nullable=False)
     permission_lvl = db.Column(db.String(50), nullable=True)
 
     user = db.relationship('User', backref=db.backref('users'))
@@ -85,7 +85,7 @@ class Player(db.Model):
     name = db.Column(db.String(50), nullable=False)
     legal_fname = db.Column(db.String(50), nullable=True)
     legal_lname = db.Column(db.String(50), nullable=True)
-    number = db.Column(db.Integer, nullable=False)
+    number = db.Column(db.String(4), nullable=False)
     started = db.Column(db.Date, nullable=False)
     retired = db.Column(db.Date, nullable=True)
     
