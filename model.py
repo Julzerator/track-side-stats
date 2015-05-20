@@ -24,12 +24,13 @@ class User(db.Model):
     uname = db.Column(db.String(50), nullable=True)
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(20), nullable=False)
+    permission_lvl = db.Column(db.String(50), nullable=True)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'),
                         nullable=True)
 
-    team = db.relationship('Team', backref=db.backref('teams'))
+    team = db.relationship('Team', backref='users')
     league = db.relationship('League', 
-                            secondary='LeagueUser',
+                            secondary='leagueusers',
                             backref='users')
 
     def __repr__(self):
@@ -47,12 +48,11 @@ class LeagueUser(db.Model):
     leause_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     league_id = db.Column(db.Integer, db.ForeignKey('leagues.league_id'), nullable=False)
-    permission_lvl = db.Column(db.String(50), nullable=True)
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<LeagueUser id=%s permission_lvl=%s>" % (self.leause_id, self.permission_lvl)
+        return "<LeagueUser id=%s permission_lvl=%s>" % (self.leause_id, users.permission_lvl)
 
 
 class Team(db.Model):
@@ -87,36 +87,17 @@ class Player(db.Model):
     started = db.Column(db.Date, nullable=True)
     retired = db.Column(db.Date, nullable=True)
 
-    player_teams = db.relationship('Team',
-                                   secondary='TeamPlayer',
-                                   backref=db.backref('players'))
+    jams = db.relationship('JamPosition', backref='players')
+    teams = db.relationship('Team',
+                            secondary='teamplayers',
+                            backref='players')
     
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Player id=%s name=%s>" % (self.player_id, self.name)
-
-
-class Position(db.Model):
-    """The Position class."""
-
-    __tablename__ = "positions"
-
-    position_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    position_type = db.Column(db.String(50), nullable=False)
-
-    # players = db.relationship('Player',
-    #                           secondary='JamPosition'
-    #                           backref=db.backref('positions'))
-    
-
-    def __repr__(self):
-        """Provide helpful representation when printed."""
-
-        return "<Position id=%s name=%s type=%s>" % (self.position_id, self.name, 
-            self.position_type)
+        return "<Player id=%s name=%s number=%s>" % (self.player_id, 
+            self.name, self.number)
 
 
 class TeamPlayer(db.Model):
@@ -132,7 +113,7 @@ class TeamPlayer(db.Model):
         """Provide helpful representation when printed."""
 
         return "<TeamPlayer id=%s team_name=%s player_name=%s>" % (self.teapla_id, 
-            self.team_name, self.player_name)
+            teams.name, players.name)
 
 
 class League(db.Model):
@@ -147,7 +128,7 @@ class League(db.Model):
     founded = db.Column(db.Date, nullable=True)
     disbanded = db.Column(db.Date, nullable=True)
 
-    teams = db.relationship('Team', backref=db.backref('leagues'))
+    teams = db.relationship('Team', backref='leagues')
 
     
     def __repr__(self):
@@ -164,20 +145,20 @@ class Roster(db.Model):
     roster_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey('games.game_id'), nullable=False)
-    ord = db.Column(db.Integer, nullable=False)
+    ordinal = db.Column(db.Integer, nullable=False)
     color = db.Column(db.Integer, nullable=False)
 
-    team_name = db.relationship('Team', backref=db.backref('rosters'))
-    game_info = db.relationship('Game', backref=db.backref('rosters'))
+    teams = db.relationship('Team', backref='rosters')
+    games = db.relationship('Game', backref='rosters')
     players = db.relationship('Player',
-                              secondary='RosterPlayer',
-                              backref=db.backref('rosters'))
+                              secondary='rosterplayers',
+                              backref='rosters')
     
     def __repr__(self):
         """Provide helpful representation when printed."""
 
         return "<Roster id=%s teamname=%s color=%s>" % (self.roster_id, 
-            self.team_name, self.color)
+            teams.name, self.color)
 
 
 class RosterPlayer(db.Model):
@@ -193,7 +174,7 @@ class RosterPlayer(db.Model):
         """Provide helpful representation when printed."""
 
         return "<RosterPlayer id=%s player_name=%s roster_id=%s >" % (self.rospla_id, 
-            self.player_name, self.roster_id)
+            players.name, rosters.roster_id)
 
 
 class Game(db.Model):
@@ -230,35 +211,36 @@ class Jam(db.Model):
     t_start = db.Column(db.DateTime, nullable=True)
     t_end = db.Column(db.DateTime, nullable=True)
 
-    game_info = db.relationship('Game', backref=db.backref('jams'))
+    game = db.relationship('Game', backref='jams')
+    players = db.relationship('JamPosition', backref='jams')
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Jam id=%s period=%s, number=%s>" % (self.jam_id, 
+        return "<Jam id=%s period=%s, jam number=%s>" % (self.jam_id, 
             self.period, self.number)    
 
 
 class JamPosition(db.Model):
-    """A joiner table between Player, Jam, and Position."""
+    """An Association Object table between Player and Jam."""
 
     __tablename__ = "jampositions"
     
     jampos_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     jam_id = db.Column(db.Integer, db.ForeignKey('jams.jam_id'), nullable=False)
-    position_id = db.Column(db.Integer, db.ForeignKey('positions.position_id'), nullable=False)
+    position = db.Column(db.String(20), nullable=False)
     player_id = db.Column(db.Integer, db.ForeignKey('players.player_id'), nullable=False)
     
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<JamPosition id=%s player_name=%s position_name=%s jam_info=%s>" % (
-            self.jampos_id, self.player_name, self.position_name, self.jam_info)
+        return "<JamPosition id=%s player_name=%s position=%s jam_info=%s>" % (
+            self.jampos_id, players.name, self.position, self.jam_id)
 
 
 class Action(db.Model):
-    """The Action class."""
+    """An Association Object table between jams and players."""
 
     __tablename__ = "actions"
 
@@ -269,15 +251,15 @@ class Action(db.Model):
     points = db.Column(db.Integer, nullable=True)
     timestamp = db.Column(db.DateTime, nullable=False)
 
-    jam_info = db.relationship('Jam', backref=db.backref('actions'))
-    player_name = db.relationship('Player', backref=db.backref('actions'))
+    jams = db.relationship('Jam', backref='actions')
+    players = db.relationship('Player', backref='actions')
 
 
     def __repr__(self):
         """Provide helpful representation when printed."""
 
         return "<Action id=%s player_name=%s, play=%s>" % (self.action_id, 
-            self.player_name, self.number)    
+            players.name, self.play)    
 
 
 # End Part 1
