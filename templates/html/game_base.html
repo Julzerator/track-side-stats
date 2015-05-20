@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Track Side Stats</title>
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+		<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+	</head>
+	<body>
+		{% block content %}
+
+		{% endblock %}
+		{% for message in get_flashed_messages() %}
+			<ul>
+				<li>{{ message }}</li>
+			</ul>
+		{% endfor %}
+	</body>
+</html>

@@ -1,0 +1,33 @@
+{% extends 'html/web_base.html' %}
+{% block content %}
+
+<h1>Create New Game</h1>
+
+<form action="/new_game" method="POST">
+	Home Team: <input type='number' name='home_team' required>
+	Visiting Team: <input type='number' name='visiting_team' required><br>
+	Date of game: <input type='date' name='date_input' required><br>
+	Event Name: <input type='text' name='event_input'><br>
+	Location: <input type='text' name='location_input' required><br>
+	Game Type: 
+		<select name='g_type_input'>
+			<option value='A team'>A team</option>
+			<option value='B team'>B team</option>
+			<option value='home team'>home team</option>
+			<option value='rec league'>rec league</option>
+			<option value='scrimmage'>scrimmage</option>
+		</select><br>
+	Floor Type: 
+		<select name='floor_input'>
+			<option value='wood'>wood</option>
+			<option value='sport court'>sport court</option>
+			<option value='concrete'>concrete</option>
+			<option value='polished concrete'>polished concrete</option>
+			<option value='outdoors concrete'>outdoors concrete</option>
+		</select><br>
+		<br>
+	<input type='submit' value='Create Game'>
+</form>
+
+
+{% endblock %}
