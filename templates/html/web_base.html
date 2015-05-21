@@ -34,12 +34,11 @@
 	        </div><!-- /.navbar-collapse -->
 	      </div><!-- /.container-fluid -->
 	    </nav>
-		{% for message in get_flashed_messages() %}
-			<ul>
-				<li>{{ message }}</li>
+		    <ul>
+				{% for message in get_flashed_messages() %}
+					<li>{{ message }}</li>
+				{% endfor %}
 			</ul>
-		{% endfor %}
-
 		{% block content %}
 
 		{% endblock %}

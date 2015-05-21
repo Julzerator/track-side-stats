@@ -101,10 +101,23 @@ def account_update():
     return redirect("/")
 
 
-@app.route('/league')
+@app.route('/league', methods=['POST'])
 def new_league():
     """ Add a new League. """
-    flash("Working on implementing this!")
+    
+    name = request.form["name_input"]
+    affiliation = request.form["affiliation_input"]
+    location = request.form["location_input"]
+    founded = request.form["founded_input"]
+
+    new_league = League(name=name,
+        affiliation=affiliation,
+        location=location,
+        founded=founded)
+
+    db.session.add(new_league)
+
+    db.session.commit()
 
     return redirect("/")
 
@@ -117,10 +130,23 @@ def league_update(league_id):
     return redirect("/")
 
 
-@app.route('/team')
+@app.route('/team', methods=['POST'])
 def new_team():
     """ Add a new Team. """
-    flash("Working on implementing this!")
+    
+    league_id = request.form["league_id"]
+    name = request.form["name_input"]
+    t_type = request.form["t_type_input"]
+    founded = request.form["founded_input"]
+
+    new_team = Team(league_id=league_id,
+        name=name,
+        t_type=t_type,
+        founded=founded)
+
+    db.session.add(new_team)
+
+    db.session.commit()
 
     return redirect("/")
 
@@ -151,10 +177,54 @@ def load_team():
     return redirect("/")
 
 
-@app.route('/player')
+@app.route('/player', methods=['POST'])
 def new_player():
     """ Add a new Player. """
-    flash("Working on implementing this!")
+
+    name = request.form["name_input"]
+    legal_fname = request.form["fname_input"]
+    legal_lname = request.form["lname_input"]
+    number = request.form["number_input"]
+    started = request.form["started_input"]
+
+    # Check to see if there is another player with that
+    # exact name / number combo.
+
+    players = db.session.query(Player.name, Player.number)
+    player_check = players.filter(Player.name == name,
+        Player.number == number)
+
+    if player_check.first() == None:
+        new_player = Player(name=name,
+            legal_fname=legal_fname,
+            legal_lname=legal_lname,
+            number=number,
+            started=started)
+
+        db.session.add(new_player)
+        db.session.commit()
+
+    else:
+        existing_player = player_check.first()
+        # Return that the player already exists
+        # Show the player name, number, location, and team (if available)
+
+    team_id = request.form["team_id"]
+
+    if team_id != None:
+        newest_player = players.filter(Player.name == name,
+        Player.number == number).first()
+        teamplayer = TeamPlayer(team_id=team_id,
+            player_id=newest_player.player_id)
+
+    return redirect("/")
+
+
+@app.route('/player_details/<int:player_id>')
+def player_details(player_id):
+    """ Show an existing Player. """
+    
+    player = Player.query.get(player_id)
 
     return redirect("/")
 
@@ -167,36 +237,77 @@ def player_update(player_id):
     return redirect("/")
 
 
-@app.route('/blocker/<int:jam_id>/<int:player_id>')
-def blocker_action(jam_id, player_id):
+@app.route('/action', methods=['POST'])
+def record_action():
     """ 
-    Record an action (blocker)
-    o Drive jammer out (and null?)
-    o Knock jammer down (and null?)
-    o Screen allowing your jammer by
-    o Draw cut
-    o Whip
-    o Block assist
-    o Penalty (in queue? question to answer.)
+    Record actions by Blockers and Jammers.
     """
+    # Record an action (blocker)
+    # o Drive jammer out (and null?)
+    # o Knock jammer down (and null?)
+    # o Screen allowing your jammer by
+    # o Draw cut
+    # o Whip
+    # o Block assist
+    # o Penalty (in queue? question to answer.)
+    
+
+
+    # Record an action (jammer)
+    # -- These are coded into the JS
+    # o Star pass. UGH 
+    # o Award Lead Jammer
+    # o Call off a jam (by jammer)
+    # o Award points
+    # o Lost lead
+    # o Not lead first pass
+    # o Lap number?
+    # o Penalty
+
+    jam_id = session.get("jam_id")
+    player_id = session.get("player_id")
+    play = session.get("play")
+    timestamp = datetime.utcnow()
+
+    points = session["points"]
+
+    action = Action(jam_id=jam_id,
+        player_id=player_id,
+        play=play,
+        timestamp=timestamp)
+
+    # Remove this data from the session:
+    db.session.add(action)
+    db.session.commit()
+
+    session.pop('play', None)
+    session.pop('points', None)
+
     flash("Working on implementing this!")
 
     return redirect("/")
 
 
-@app.route('/jammer/<int:jam_id>/<int:player_id>')
-def jammer_action(jam_id, player_id):
+@app.route('/jammer', methods=['POST'])
+def jammer_action():
     """
-    Record an action (jammer)
-    o Star pass. UGH 
-    o Award Lead Jammer
-    o Call off a jam (by jammer)
-    o Award points
-    o Lost lead
-    o Not lead first pass
-    o Lap number?
-    o Penalty
+
     """
+
+    jam_id = session["jam_id"]
+    player_id = session["player_id"]
+    play = request.form["play"]
+    timestamp = datetime.utcnow()
+
+    action = Action(jam_id=jam_id,
+        player_id=player_id,
+        play=play,
+        points=points,
+        timestamp=timestamp)
+
+    db.session.add(action)
+    db.session.commit()
+
     flash("Working on implementing this!")
 
     return redirect("/")

@@ -222,7 +222,9 @@ class Jam(db.Model):
 
 
 class JamPosition(db.Model):
-    """An Association Object table between Player and Jam."""
+    """An Association Object table between Player and Jam.
+    http://docs.sqlalchemy.org/en/latest/orm/basic_relationships.html#many-to-many
+    """
 
     __tablename__ = "jampositions"
     

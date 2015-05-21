@@ -3,16 +3,18 @@
 	<head>
 		<title>Track Side Stats</title>
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-		<script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+		<script src='./src/TSS/static/underscore-min.js'></script>
+		<script src="./src/TSS/static/jquery-2.1.4.min.js"></script>
+		<script src="./src/TSS/static/jquery.timer.js"></script>
 	</head>
 	<body>
 		{% block content %}
 
 		{% endblock %}
-		{% for message in get_flashed_messages() %}
 			<ul>
-				<li>{{ message }}</li>
+				{% for message in get_flashed_messages() %}
+					<li>{{ message }}</li>
+				{% endfor %}
 			</ul>
-		{% endfor %}
 	</body>
 </html>
