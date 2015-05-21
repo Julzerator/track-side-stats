@@ -5,8 +5,8 @@ from flask import Flask, render_template, redirect, request, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
 from model import (connect_to_db, db, User, LeagueUser, Team, Player, 
-                  Position, TeamPlayer, League, Roster, RosterPlayer,
-                  Game, Jam, JamPosition, Action)
+                  TeamPlayer, League, Roster, RosterPlayer, Game,
+                  Jam, JamPosition, Action)
 
 
 app = Flask(__name__)
@@ -327,6 +327,12 @@ def jam_end(jam_id):
     flash("Working on implementing this!")
 
     return redirect("/")
+
+@app.route('/between_jams')
+def between_jams():
+    """Screen to assign new players to positions."""
+
+    return render_template("html/between_jams.html")
 
 
 @app.route('/to_new_game')

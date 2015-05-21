@@ -3,11 +3,82 @@
 	<head>
 		<title>Track Side Stats</title>
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-		<script src='./src/TSS/static/underscore-min.js'></script>
-		<script src="./src/TSS/static/jquery-2.1.4.min.js"></script>
-		<script src="./src/TSS/static/jquery.timer.js"></script>
+		<link rel="stylesheet" href="static/js/jquery-ui.min.css">
+		<!-- // <script src='static/js/underscore-min.js'></script> -->
+		<script src="static/js/jquery-2.1.4.min.js"></script>
+		<script src="static/js/tock/tock.js"></script>
+		<script src="static/js/external/jquery/jquery.js"></script>
+		<script src="static/js/jquery-ui.min.js"></script>
+		<!-- // <script src="static/js/trackstats.js"></script> -->
+		<script>
+        window.onload = function() {
+
+            var timer = new Tock({
+                callback: function () {
+                    $('#clockface').val(timer.msToTime(timer.lap()));
+                }
+            });
+
+            $('#start').on('click', function () {
+                timer.start($('#clockface').val());
+            });
+
+            $('#lap').on('click', function () {
+                $('#laptimes').append(timer.msToTime(timer.lap()) + '<br>');
+            });
+
+            $('#pause').on('click', function () {
+                timer.pause();
+            });
+
+            $('#stop').on('click', function () {
+                timer.stop();
+            });
+
+            $('#reset').on('click', function () {
+                timer.reset();
+                $('#clockface').val('');
+                $('#laptimes').html('');
+            });
+
+            var countdown = Tock({
+                countdown: true,
+                interval: 100,
+                callback: function () {
+                    console.log(countdown.lap() / 1000);
+                    $('#countdown_clock').text(timer.msToTime(countdown.lap()));
+                },
+                complete: function () {
+                    console.log('end');
+                    alert("Time's up!");
+                }
+            });
+
+            $('#startCountdown').on('click', function () {
+                countdown.start($('#countdown_clock').text());
+            });
+
+            $(document).ready( function () {
+ 				countdown.start($('#countdown_clock').text());
+			});
+
+            $('#pauseCountdown').on('click', function () {
+                countdown.pause();
+            });
+
+            $('#stopCountdown').on('click', function () {
+                countdown.stop();
+            });
+
+            $('#resetCountdown').on('click', function () {
+                countdown.stop();
+                $('#countdown_clock').text('00:02');
+            });
+        }
+    </script>
 	</head>
 	<body>
+		<h1>Game Screen</h1>
 		{% block content %}
 
 		{% endblock %}
