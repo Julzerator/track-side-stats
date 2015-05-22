@@ -25,7 +25,7 @@ def index():
     """
     Homepage.
     """
-
+    # In development
 
     return render_template('html/index.html')
 
@@ -36,6 +36,7 @@ def to_signup():
     A User requests an account.
     This is not fully realized for demo purposes.
     """
+    # In development
 
     # I want to return their info then
     # email them a link in the final version.
@@ -50,6 +51,7 @@ def signup():
     A User requests an account.
     This is not fully realized for demo purposes.
     """
+    # In development
 
     # I want to return their info then
     # email them a link in the final version.
@@ -64,6 +66,8 @@ def to_login():
     Go to the login page if no post information.
     User logs in to the site.
     """
+    # In development
+
     flash("Working on implementing this!")
 
     return redirect("/")
@@ -75,6 +79,8 @@ def login():
     Go to the login page if no post information.
     User logs in to the site.
     """
+    # In development
+
     flash("Working on implementing this!")
 
     return redirect("/")
@@ -85,6 +91,8 @@ def logout():
     """
     User logs out of the site.
     """
+    # In development
+
     flash("Working on implementing this!")
 
     return redirect("/")
@@ -96,6 +104,8 @@ def account_update():
     Go to the account page if no post information.
     Otherwise update the account of current User.
     """
+    # In development
+
     flash("Working on implementing this!")
 
     return redirect("/")
@@ -104,6 +114,7 @@ def account_update():
 @app.route('/league', methods=['POST'])
 def new_league():
     """ Add a new League. """
+    # In development
     
     name = request.form["name_input"]
     affiliation = request.form["affiliation_input"]
@@ -125,6 +136,8 @@ def new_league():
 @app.route('/league/<int:league_id>')
 def league_update(league_id):
     """ League. """
+    # In development
+
     flash("Working on implementing this!")
 
     return redirect("/")
@@ -133,6 +146,7 @@ def league_update(league_id):
 @app.route('/team', methods=['POST'])
 def new_team():
     """ Add a new Team. """
+    # In development
     
     league_id = request.form["league_id"]
     name = request.form["name_input"]
@@ -154,6 +168,8 @@ def new_team():
 @app.route('/team/<int:team_id>')
 def team_update(team_id):
     """ Change an existing Team. """
+    # In development
+
     flash("Working on implementing this!")
 
     return redirect("/")
@@ -170,6 +186,8 @@ def load_team():
     the player already exists and see if they want to add this
     player... otherwise create the new player.
     """
+    # In development
+
     flash("Working on implementing this!")
 
     # Stretch goal
@@ -180,6 +198,7 @@ def load_team():
 @app.route('/player', methods=['POST'])
 def new_player():
     """ Add a new Player. """
+    # In development
 
     name = request.form["name_input"]
     legal_fname = request.form["fname_input"]
@@ -190,7 +209,7 @@ def new_player():
     # Check to see if there is another player with that
     # exact name / number combo.
 
-    players = db.session.query(Player.name, Player.number)
+    players = db.session.query(Player)
     player_check = players.filter(Player.name == name,
         Player.number == number)
 
@@ -223,6 +242,7 @@ def new_player():
 @app.route('/player_details/<int:player_id>')
 def player_details(player_id):
     """ Show an existing Player. """
+    # In development
     
     player = Player.query.get(player_id)
 
@@ -232,6 +252,8 @@ def player_details(player_id):
 @app.route('/player/<int:player_id>')
 def player_update(player_id):
     """ Change an existing Player. """
+    # In development
+
     flash("Working on implementing this!")
 
     return redirect("/")
@@ -242,6 +264,8 @@ def record_action():
     """ 
     Record actions by Blockers and Jammers.
     """
+    # In development
+
     # Record an action (blocker)
     # o Drive jammer out (and null?)
     # o Knock jammer down (and null?)
@@ -288,34 +312,11 @@ def record_action():
     return redirect("/")
 
 
-@app.route('/jammer', methods=['POST'])
-def jammer_action():
-    """
-
-    """
-
-    jam_id = session["jam_id"]
-    player_id = session["player_id"]
-    play = request.form["play"]
-    timestamp = datetime.utcnow()
-
-    action = Action(jam_id=jam_id,
-        player_id=player_id,
-        play=play,
-        points=points,
-        timestamp=timestamp)
-
-    db.session.add(action)
-    db.session.commit()
-
-    flash("Working on implementing this!")
-
-    return redirect("/")
-
-
 @app.route('/jam_start')
 def jam_start():
     """ Start a new jam. """
+    # In development
+
     flash("Working on implementing this!")
 
     return redirect("/")
@@ -324,6 +325,8 @@ def jam_start():
 @app.route('/jam_end/<int:jam_id>')
 def jam_end(jam_id):
     """ End jam. (call off or injury) """
+    # In development
+
     flash("Working on implementing this!")
 
     return redirect("/")
@@ -331,6 +334,7 @@ def jam_end(jam_id):
 @app.route('/between_jams')
 def between_jams():
     """Screen to assign new players to positions."""
+    # In development
 
     return render_template("html/between_jams.html")
 
@@ -338,6 +342,8 @@ def between_jams():
 @app.route('/to_new_game')
 def to_new_game():
     """ Direct user to the game setup screen. """
+    # In development
+
     flash("Working on implementing this!")
 
     return render_template("html/game.html")
@@ -346,6 +352,7 @@ def to_new_game():
 @app.route('/new_game', methods=['POST'])
 def game_setup():
     """ Create a new game. """
+    # In development
 
     date = request.form["date_input"]
     location = request.form["location_input"]
@@ -370,20 +377,73 @@ def game_setup():
     return redirect("/to_new_game")
 
 
-@app.route('/add_roster')
-def add_roster():
+@app.route('/add_roster/<int:team_id>/<int:ordinal>')
+def add_roster(team_id, ordinal):
     """
     Create a new roster for the game, adding all players from the
     team indicated by the game and assigning whether home or opposing.
     """
-    flash("Working on implementing this!")
+    # In development
 
-    return redirect("/")
+    game_id = 1 #for testing will be: session["game_id"]
+    color = 'Choose'
+
+    # Check to see if the game has an assigned home or away team already
+    existing = session.query(Roster).filter_by(game_id = game_id).all()
+
+    print existing
+
+    # If so, delete the related roster/player data and create a new roster.
+
+
+    # Create the new roster (working)
+
+    # roster = Roster(team_id=team_id,
+    #     game_id=game_id,
+    #     ordinal=ordinal,
+    #     color=color)
+
+    # db.session.add(roster)
+    # db.session.commit()
+
+    # roster_team = Team.query.get(roster.team_id)
+    # print roster_team.name
+
+    # # Add this roster to session under ordinal number.
+    # roster = session.query(Roster).filter(Roster.game_id=game_id, 
+    #     Roster.ordinal=ordinal, Roster.team_id=team_id).one()
+
+    # session['team'+ ordinal] = roster.roster_id
+
+    # print roster.roster_id
+
+    # # Get the team
+    # teamplayers = session.query(TeamPlayer).filter(
+    #     TeamPlayer.team_id=team_id)
+
+    # print team.name
+
+    # # Create the new roster for this game.
+    # for player in teamplayers:
+    #     rosterplayer = RosterPlayer(roster_id=roster.roster_id,
+    #         player_id=teamplayers.player_id)
+    #     db.session.add(rosterplayer)
+
+    # db.session.commit()
+
+    # # Print the roster to the screen.
+    # if 'team1' in session:
+
+
+
+    # return redirect("/")
 
 
 @app.route('/change_roster')
 def change_roster():
     """ Add/Remove Player from Roster. """
+    # In development
+
     flash("Working on implementing this!")
 
     return redirect("/")
@@ -399,6 +459,8 @@ def show_roster():
     start with a letter are alphabetical at the end
     of the list.
     """
+    # In development
+
     flash("Working on implementing this!")
 
     return redirect("/")
@@ -413,6 +475,8 @@ def analyze():
     o -- point differential as a line
     o 
     """
+    # In development
+    
     flash("Working on implementing this!")
 
     # Stretch goal

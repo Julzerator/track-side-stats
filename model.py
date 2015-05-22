@@ -146,7 +146,7 @@ class Roster(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), nullable=False)
     game_id = db.Column(db.Integer, db.ForeignKey('games.game_id'), nullable=False)
     ordinal = db.Column(db.Integer, nullable=False)
-    color = db.Column(db.Integer, nullable=False)
+    color = db.Column(db.String(20), nullable=False)
 
     teams = db.relationship('Team', backref='rosters')
     games = db.relationship('Game', backref='rosters')
@@ -183,7 +183,7 @@ class Game(db.Model):
     __tablename__ = "games"
 
     game_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    date = db.Column(db.Date, nullable=False)
+    date = db.Column(db.Date, nullable=True)
     location = db.Column(db.String(100), nullable=False)
     event_name = db.Column(db.String(100), nullable=True)
     g_type = db.Column(db.String(100), nullable=False)
@@ -251,7 +251,7 @@ class Action(db.Model):
     player_id = db.Column(db.Integer, db.ForeignKey('players.player_id'), nullable=False)
     play = db.Column(db.String(20), nullable=False)
     points = db.Column(db.Integer, nullable=True)
-    timestamp = db.Column(db.DateTime, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.now(), nullable=False)
 
     jams = db.relationship('Jam', backref='actions')
     players = db.relationship('Player', backref='actions')
