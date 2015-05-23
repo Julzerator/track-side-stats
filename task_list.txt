@@ -5,6 +5,13 @@ This is the task list for the Project "Track Side Stats"
 ===Working On===
 
 o- Final few Wireframe views
+o- Make League Views
+o- Make Team Views
+o- Make Player Views
+o- Hook up routes to League Views
+o- Hook up routes to Team Views
+o- Hook up routes to Player Views
+
 
 ===TODO===
 

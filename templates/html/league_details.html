@@ -1,0 +1,28 @@
+{% extends 'html/web_base.html' %}
+{% block content %}
+
+    <h2>League Details</h2>
+
+    <div name="league_details">
+      Name: {{ league.name }} <br>
+      Affiliation: {{ league.affiliation }} <br>
+      Location: {{ league.location }} <br>
+      Founded: {{ league.founded }} <br>
+      Disbanded: {{ league.disbanded }} <br>
+    </div>
+    <div name="league_teams">
+    <ul>
+      {% for team in league_teams %}
+        <li>
+            <a href="/team_details/{{ team.team_id }}">
+              {{ team.name }} ({{ team.t_type }})
+            </a>
+            <ul>
+              {% for player in  %}
+            </ul>
+        </li>
+      {% endfor %}
+    </ul>
+    </div>
+
+{% endblock %}

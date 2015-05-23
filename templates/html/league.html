@@ -1,0 +1,27 @@
+{% extends 'html/web_base.html' %}
+{% block content %}
+
+<h1>Create New League</h1>
+
+<form action="/new_league" method="POST">
+	Name: <input type='text' name='name_input' required> 
+	Affiliation: 
+		<select name='affiliation_input'>
+			<option value='WFTDA'>WFTDA</option>
+			<option value='WFTDA_A'>WFTDA Apprentice</option>
+			<option value='USARS'>USARS</option>
+			<option value='JRDA'>JRDA</option>
+			<option value='UKRDA'>UKRDA</option>
+			<option value='MRDA'>MRDA</option>
+			<option value='RDAC'>RDAC</option>
+			<option value='MADE'>MADE</option>
+			<option value='None' selected></option>
+		</select><br>
+	Location: <input type='text' name='location_input' required><br>
+	Founded: <input type='date' name='founded_input' required><br>
+		<br>
+	<input type='submit' value='Add New League'>
+</form>
+
+
+{% endblock %}

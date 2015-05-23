@@ -1,0 +1,24 @@
+{% extends 'html/web_base.html' %}
+{% block content %}
+
+    <h2>Team Details</h2>
+
+    <div name="team_details">
+      Name: {{ team.name }} <br>
+      Team Type: {{ team.t_type }} <br>
+      Founded: {{ team.founded }} <br>
+      Disbanded: {{ team.disbanded }} <br>
+    </div>
+    <div name="team_players">
+    <ul>
+      {% for player in team_players %}
+        <li>
+            <a href="/player_details/{{ player.player_id }}">
+              {{ player.number }} -- {{ player.name }}
+            </a>
+        </li>
+      {% endfor %}
+    </ul>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'html/web_base.html' %}
+{% block content %}
+
+<h1>Create New Team</h1>
+
+<form action="/new_league" method="POST">
+	Name: <input type='text' name='name_input' required> 
+	Team Type: 
+		<select name='t_type_input'>
+			<option value='Travel'>Travel Team</option>
+			<option value='B Team'>B Team</option>
+			<option value='Home'>Home Team</option>
+			<option value='Rec'>Recreational</option>
+			<option value='None' selected></option>
+		</select><br>
+	Founded: <input type='date' name='founded_input' required><br>
+		<br>
+	<input type='submit' value='Add New Team'>
+</form>
+
+
+{% endblock %}

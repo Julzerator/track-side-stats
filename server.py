@@ -25,7 +25,6 @@ def index():
     """
     Homepage.
     """
-    # In development
 
     return render_template('html/index.html')
 
@@ -111,68 +110,134 @@ def account_update():
     return redirect("/")
 
 
-@app.route('/league', methods=['POST'])
+@app.route('/new_league', methods=['GET', 'POST'])
 def new_league():
     """ Add a new League. """
-    # In development
-    
-    name = request.form["name_input"]
-    affiliation = request.form["affiliation_input"]
-    location = request.form["location_input"]
-    founded = request.form["founded_input"]
+    # In testing
+    if request.method == 'POST':
+        name = request.form["name_input"]
+        affiliation = request.form["affiliation_input"]
+        location = request.form["location_input"]
+        founded = request.form["founded_input"]
 
-    new_league = League(name=name,
-        affiliation=affiliation,
-        location=location,
-        founded=founded)
+        existing = League.query.filter(League.name == name,
+            League.affiliation == affiliation,
+            League.location == location).first()
 
-    db.session.add(new_league)
+        if existing:
+            message = "This league is already here: <a href='/league/%d'>/%s</a>!" % (
+            existing.league_id, existing.name)
 
-    db.session.commit()
+            flash(message)
+            
+            return redirect("/leagues")
 
-    return redirect("/")
+        else:
+
+            new_league = League(name=name,
+                affiliation=affiliation,
+                location=location,
+                founded=founded)
+
+            db.session.add(new_league)
+            db.session.commit()
+
+            message = "Thank you for adding <a href='/league/%d'>/%s</a>!" % (
+                new_league.league_id, new_league.name)
+            flash(message)
+
+            return redirect("/leagues")
+
+    else:
+        return render_template("/league.html")
 
 
 @app.route('/league/<int:league_id>')
-def league_update(league_id):
-    """ League. """
-    # In development
-
-    flash("Working on implementing this!")
-
-    return redirect("/")
-
-
-@app.route('/team', methods=['POST'])
-def new_team():
-    """ Add a new Team. """
+def league_details(league_id):
+    """ Displays the details of a League. """
     # In development
     
-    league_id = request.form["league_id"]
-    name = request.form["name_input"]
-    t_type = request.form["t_type_input"]
-    founded = request.form["founded_input"]
+    league = League.query.filter_by(league_id = league_id).one()
 
-    new_team = Team(league_id=league_id,
-        name=name,
-        t_type=t_type,
-        founded=founded)
+    league_teams = Team.query.filter_by(league_id = league_id).all()
 
-    db.session.add(new_team)
+    league_players = # Get list of Player objects based on the teams
+                     # associated to the league.
 
-    db.session.commit()
+    return render_template("league_details.html", league=league,
+        league_teams = league_teams, league_players = league_players)
 
-    return redirect("/")
+
+@app.route('/leagues')
+def league_list():
+    """Displaying a list of all leagues"""
+    # In testing
+
+    leagues = League.query.all()
+
+    return render_template("league_list.html", leagues=leagues)
+
+
+@app.route('/new_team', methods=['GET', 'POST'])
+def new_team():
+    """ Add a new Team. """
+    # In testing
+    if request.method == 'POST':
+        name = request.form["name_input"]
+        t_type = request.form["t_type_input"]
+        founded = request.form["founded_input"]
+
+        existing = Team.query.filter(Team.name == name,
+            Team.t_type == t_type).first()
+
+        if existing:
+            message = "This team is already here: <a href='/team/%d'>/%s</a>!" % (
+            existing.team_id, existing.name)
+
+            flash(message)
+            
+            return redirect("/teams")
+
+        else:
+
+            new_team = Team(name=name,
+                t_type=t_type,
+                founded=founded)
+
+            db.session.add(new_team)
+            db.session.commit()
+
+            message = "Thank you for adding <a href='/team/%d'>/%s</a>!" % (
+                new_team.team_id, new_team.name)
+            flash(message)
+
+            return redirect("/teams")
+
+    else:
+        return render_template("/team.html")
 
 
 @app.route('/team/<int:team_id>')
-def team_update(team_id):
-    """ Change an existing Team. """
+def team_details(team_id):
+    """ Displays the details of a Team. """
     # In development
+    
+    team = Team.query.filter_by(team_id = team_id).one()
 
-    flash("Working on implementing this!")
+    team_players = # Get list of Player objects based on the team.
 
-    return redirect("/")
+    return render_template("team_details.html", team=team,
+        team_players = team_players)
+
+
+@app.route('/teams')
+def team_list():
+    """Displaying a list of all teams"""
+    # In testing
+
+    teams = Team.query.all()
+
+    return render_template("team_list.html", teams=teams)
 
 
 @app.route('/load_team')
@@ -195,7 +260,7 @@ def load_team():
     return redirect("/")
 
 
-@app.route('/player', methods=['POST'])
+@app.route('/new_player', methods=['POST'])
 def new_player():
     """ Add a new Player. """
     # In development
@@ -377,8 +442,8 @@ def game_setup():
     return redirect("/to_new_game")
 
 
-@app.route('/add_roster/<int:team_id>/<int:ordinal>')
-def add_roster(team_id, ordinal):
+@app.route('/add_roster')
+def add_roster():
     """
     Create a new roster for the game, adding all players from the
     team indicated by the game and assigning whether home or opposing.
@@ -386,57 +451,90 @@ def add_roster(team_id, ordinal):
     # In development
 
     game_id = 1 #for testing will be: session["game_id"]
-    color = 'Choose'
+    color = 'Choose' # will be: request.form["date_input"]
+    team_id = request.form["team_id"]
+    ordinal = request.form["ordinal"] # either 1 (home) or 2 (away)
 
     # Check to see if the game has an assigned home or away team already
-    existing = session.query(Roster).filter_by(game_id = game_id).all()
-
-    print existing
-
-    # If so, delete the related roster/player data and create a new roster.
+    existing = db.session.query(Roster).filter_by(game_id = 1).all()
+    home = existing.filter_by(ordinal=1).first()
+    away = existing.filter_by(ordinal=2).first()
 
 
-    # Create the new roster (working)
+    if ordinal == 1:
+        if home:
+            # If so, delete the related roster/player data
+            old_roster = db.session.query(RosterPlayer).filter_by(
+                roster_id=home.roster_id)
+            db.session.delete(old_roster)
+            db.session.commit()
+            # Then create the new roster.
+            new_roster = Roster(team_id=team_id,
+                game_id=game_id,
+                ordinal=1,
+                color=color)
 
-    # roster = Roster(team_id=team_id,
-    #     game_id=game_id,
-    #     ordinal=ordinal,
-    #     color=color)
+            db.session.add(new_roster)
+            db.session.commit()
 
-    # db.session.add(roster)
-    # db.session.commit()
+    elif ordinal == 2:
+        if away:
+            # If so, delete the related roster/player data
+            old_roster = db.session.query(RosterPlayer).filter_by(
+                roster_id=away.roster_id)
+            db.session.delete(old_roster)
+            db.session.commit()
+            # Then create the new roster.
+            new_roster = Roster(team_id=team_id,
+                game_id=game_id,
+                ordinal=2,
+                color=color)
 
-    # roster_team = Team.query.get(roster.team_id)
-    # print roster_team.name
+            db.session.add(new_roster)
+            db.session.commit()
 
-    # # Add this roster to session under ordinal number.
-    # roster = session.query(Roster).filter(Roster.game_id=game_id, 
-    #     Roster.ordinal=ordinal, Roster.team_id=team_id).one()
+    else:
+        # Then create the new roster.
+        new_roster = Roster(team_id=team_id,
+            game_id=game_id,
+            ordinal=ordinal,
+            color=color)
 
-    # session['team'+ ordinal] = roster.roster_id
-
-    # print roster.roster_id
-
-    # # Get the team
-    # teamplayers = session.query(TeamPlayer).filter(
-    #     TeamPlayer.team_id=team_id)
-
-    # print team.name
-
-    # # Create the new roster for this game.
-    # for player in teamplayers:
-    #     rosterplayer = RosterPlayer(roster_id=roster.roster_id,
-    #         player_id=teamplayers.player_id)
-    #     db.session.add(rosterplayer)
-
-    # db.session.commit()
-
-    # # Print the roster to the screen.
-    # if 'team1' in session:
+        db.session.add(new_roster)
+        db.session.commit()
 
 
+    roster_team = Team.query.get(new_roster.team_id)
+    print roster_team.name
 
-    # return redirect("/")
+    # Add this roster to session under ordinal number.
+    roster = session.query(Roster).filter(Roster.game_id == game_id, 
+        Roster.ordinal == ordinal, Roster.team_id == team_id).one()
+
+    session['team'+ ordinal] = roster.roster_id
+
+    print roster.roster_id
+
+    # Get the team
+    teamplayers = session.query(TeamPlayer).filter(
+        TeamPlayer.team_id == team_id).all()
+
+    print teamplayers
+
+    # Add the players to the roster.
+    for player in teamplayers:
+        rosterplayer = RosterPlayer(roster_id=roster.roster_id,
+            player_id=player.player_id)
+        db.session.add(rosterplayer)
+
+    db.session.commit()
+
+    # Print the roster to the screen.
+    if 'team1' in session:
+
+
+
+    return redirect("/")
 
 
 @app.route('/change_roster')
@@ -476,7 +574,7 @@ def analyze():
     o 
     """
     # In development
-    
+
     flash("Working on implementing this!")
 
     # Stretch goal

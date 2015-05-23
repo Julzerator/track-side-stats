@@ -123,7 +123,7 @@ class League(db.Model):
 
     league_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
-    affiliation = db.Column(db.String(50), nullable=False)
+    affiliation = db.Column(db.String(50), nullable=True)
     location = db.Column(db.String(50), nullable=False)
     founded = db.Column(db.Date, nullable=True)
     disbanded = db.Column(db.Date, nullable=True)
@@ -157,8 +157,7 @@ class Roster(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Roster id=%s teamname=%s color=%s>" % (self.roster_id, 
-            teams.name, self.color)
+        return "<Roster id=%s color=%s>" % (self.roster_id, self.color)
 
 
 class RosterPlayer(db.Model):
