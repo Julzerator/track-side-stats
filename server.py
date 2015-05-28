@@ -2,7 +2,7 @@
 
 from jinja2 import StrictUndefined
 from flask import (Flask, render_template, redirect, request, flash, 
-                  session, jsonify)
+                  session, jsonify, json)
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
 from model import (connect_to_db, db, User, LeagueUser, Team, Player, 
@@ -347,18 +347,8 @@ def search_players():
     return redirect("/")
 
 
-@app.route('/to_new_game')
-def to_new_game():
-    """ Direct user to the game setup screen. """
-    # In development
-
-    flash("Working on implementing this!")
-
-    return render_template("html/game_setup.html")
-
-
 @app.route('/new_game', methods=['GET', 'POST'])
-def game_setup():
+def new_game():
     """ Create a new game. """
     # In development
 
@@ -420,7 +410,7 @@ def game_setup():
 
         flash("Game Created!")
 
-        return render_template("html/game.html", home=home, away=away)
+        return redirect("/game_setup")
 
     else:
         teams = Team.query.all()
@@ -457,11 +447,42 @@ def add_roster(game_id, color, team_id, ordinal):
         db.session.add(rosterplayer)
     db.session.commit()
 
-    rosterplayers = db.session.query(Player.number, Player.name,
-        Player.player_id, RosterPlayer.rospla_id).join(RosterPlayer).filter(
-        RosterPlayer.roster_id == new_roster.roster_id).order_by(Player.name)
+    return new_roster
+
+def get_roster(team):
+
+    rosterplayers = []
+
+    if team == 'home':
+        home = session.get('home_team')
+        home_roster_id = home['roster_id']
+
+        rosterplayers = db.session.query(Player.number, Player.name,
+            Player.player_id, RosterPlayer.rospla_id, RosterPlayer.roster_id)\
+            .join(RosterPlayer)\
+            .filter(RosterPlayer.roster_id == home_roster_id)\
+            .order_by(Player.name).all()
+
+    elif team == 'away':
+
+        away = session.get('away_team')
+        away_roster_id = away['roster_id']
+
+        rosterplayers = db.session.query(Player.number, Player.name,
+            Player.player_id, RosterPlayer.rospla_id, RosterPlayer.roster_id)\
+            .join(RosterPlayer)\
+            .filter(RosterPlayer.roster_id == away_roster_id)\
+            .order_by(Player.name).all()
 
     return rosterplayers
+
+@app.route('/game_setup')
+def game_setup():
+
+    home = get_roster('home')
+    away = get_roster('away')
+
+    return render_template('html/game_setup.html', home=home, away=away)
 
 
 @app.route('/change_roster/<change_type>')
@@ -472,47 +493,59 @@ def change_roster(change_type):
 
     if change_type == 'search':
         players = Player.query.all()
+        json_players = []
+        for player in players:
+            each = {
+                'player_id' : player.player_id,
+                'number' : player.number,
+                'name' : player.name
+            }
+            json_players.extend(each)
+
+        return json_players
 
     elif change_type == 'add':
         # Get the selected player_id, roster_id and add
         # to RosterPlayer.
+        pass
 
     elif change_type == 'remove':
         # Get the selected rospla_id and remove from db.
+        return redirect('/game_setup')
 
     return redirect("/")
 
 
-@app.route('/show_roster/<roster_id>/<ordered_by>')
-def show_roster(roster_id, ordered_by):
-    """
-    Order roster by Derby Ordering.
-    - this is basically ordering by first number
-    in the player number, then by the second number
-    in the player number, etc... player numbers that
-    start with a letter are alphabetical at the end
-    of the list.
-    """
-    # In development
-    rosterplayers = db.session.query(Player.number, Player.name,
-        Player.player_id).join(RosterPlayer).filter(
-        RosterPlayer.roster_id == roster_id)
+# @app.route('/show_roster/<roster_id>/<ordered_by>')
+# def show_roster(roster_id, ordered_by):
+#     """
+#     Order roster by Derby Ordering.
+#     - this is basically ordering by first number
+#     in the player number, then by the second number
+#     in the player number, etc... player numbers that
+#     start with a letter are alphabetical at the end
+#     of the list.
+#     """
+#     # In development
+#     rosterplayers = db.session.query(Player.number, Player.name,
+#         Player.player_id).join(RosterPlayer).filter(
+#         RosterPlayer.roster_id == roster_id)
         
 
-    if ordered_by == 'alpha':
-        rosterplayers = rosterplayers.order_by(Player.name)
-    elif ordered_by == 'num':
-        rosterplayers = rosterplayers.order_by(Player.number)
-    elif ordered_by == 'derby':
-        derby_order = []
-        # for player in rosterplayers:
+#     if ordered_by == 'alpha':
+#         rosterplayers = rosterplayers.order_by(Player.name)
+#     elif ordered_by == 'num':
+#         rosterplayers = rosterplayers.order_by(Player.number)
+#     elif ordered_by == 'derby':
+#         derby_order = []
+#         # for player in rosterplayers:
 
 
-    return redirect("/")
+#     return redirect("/")
 
 
-@app.route('/start_jam')
-def start_jam():
+@app.route('/starting_jam')
+def starting_jam():
     """
     Set up the starting jam of each period.
     This does not have the countdown clock of the between_jams.
@@ -520,10 +553,18 @@ def start_jam():
     # In development
 
     session['jam_num'] = 1
-    session['period_num'] = 1
+
+    period = session.get('period_num')
+    if not period:
+        session['period_num'] = 1
+    else:
+        session['period_num'] += 1
+
+    home = get_roster('home')
+    away = get_roster('away')
 
 
-    return render_template("/html/start_jam.html")
+    return render_template("/html/start_jam.html", home=home, away=away)
 
 
 @app.route('/jam_start')

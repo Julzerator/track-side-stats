@@ -1,0 +1,55 @@
+{% extends 'html/web_base.html' %}
+{% block content %}
+
+Debug game_id: {{ session.game.game_id }}
+	<div name='game_info'>
+		<h1>{{ session.game.event_name }}</h1>
+		<p name='game_info_details'>
+			Date: {{ session.game.date }}<br>
+			Location: {{ session.game.location }}<br>
+			<span name='game_info_gametype'>{{ session.game.g_type }}</span>
+			<span name='game_info_floortype'>{{ session.game.floor }}</span>
+		</p>
+	</div>
+	
+	<div name='home_roster'>
+		<h2>{{ session.home_team.team_name }}</h2>
+		<ul>
+		{% for number, name, player_id, rospla_id, roster_id in home %}
+			<li>{{ number }} - {{ name }}</li><button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button>
+		{% endfor %}
+		</ul>
+	</div>
+
+	<div name='away_roster'>
+		<h2>{{ session.away_team.team_name }}</h2>
+		<ul>
+		{% for number, name, player_id, rospla_id, roster_id in away %}
+			<li>{{ number }} - {{ name }}</li><button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button>
+		{% endfor %}
+		</ul>
+	</div>
+
+<script>
+	$('.removeplayer').on('click', removePlayer);
+
+	function removePlayer(evt) {
+		// $.post( "/change_roster/remove" , )
+		var rospla_id = 
+		alert(.attr( 'data-rosplaid' ));
+		console.log(evt);
+	};
+
+	$('.addplayer').on('click', addPlayer);
+
+	function addPlayer(evt) {
+		alert('I clicked you to add! Woot!');
+	};
+
+	$('.searchplayer').on('click', searchPlayer);
+
+	function searchPlayer(evt) {
+		alert('I want to search for the right player!');
+	}
+</script>
+{% endblock %}

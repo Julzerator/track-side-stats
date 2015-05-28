@@ -6,13 +6,15 @@
 
 	<form action="/new_game" method="POST">
 		Home Team: 
-			<select name='home_team' title='Select Home Team' required>
+			<select name='home_team' required>
+				<option value='' disabled selected>Select Home Team</option>
 				{% for team in teams %}
 				<option value='{{ team.team_id }}'>{{ team.name }}</option>
 				{% endfor %}
 			</select>
 			Color: 
-				<select name='home_color_input' title='Select Color' required>
+				<select name='home_color_input' required>
+					<option value='' disabled selected>Select Color</option>
 					<option value='aqua'>Aqua</option>
 					<option value='black'>Black</option>
 					<option value='blue'>Blue</option>
@@ -33,12 +35,14 @@
 				</select><br>
 		Visiting Team: 
 			<select name='away_team' title='Select Away Team' required>
+				<option value='' disabled selected>Select Away Team</option>
 				{% for team in teams %}
 				<option value='{{ team.team_id }}'>{{ team.name }}</option>
 				{% endfor %}
 			</select>
 			Color: 
-				<select name='away_color_input' title='Select Color' required>
+				<select name='away_color_input' required>
+					<option value='' disabled selected>Select Color</option>
 					<option value='aqua'>Aqua</option>
 					<option value='black'>Black</option>
 					<option value='blue'>Blue</option>
@@ -61,7 +65,8 @@
 		Event Name: <input type='text' name='event_input'><br>
 		Location: <input type='text' name='location_input' required><br>
 		Game Type: 
-			<select name='g_type_input' title='Select Game Type'>
+			<select name='g_type_input'>
+				<option value='' disabled selected>Select Game Type</option>
 				<option value='A team'>A team</option>
 				<option value='B team'>B team</option>
 				<option value='home team'>home team</option>
@@ -69,7 +74,8 @@
 				<option value='scrimmage'>scrimmage</option>
 			</select><br>
 		Floor Type: 
-			<select name='floor_input' title='Select Floor Type'>
+			<select name='floor_input'>
+				<option value='' disabled selected>Select Floor Type</option>
 				<option value='wood'>wood</option>
 				<option value='sport court'>sport court</option>
 				<option value='concrete'>concrete</option>
@@ -80,9 +86,10 @@
 		<input type='submit' value='Create Game'>
 	</form>
 {% else %}
-Debug game_id: {{ session.game.game_id }}
+	<h1>Current Game: </h1>
+	Debug game_id: {{ session.game.game_id }}
 	<div name='game_info'>
-		<h1>{{ session.game.event_name }}</h1>
+		<h2>{{ session.game.event_name }}</h2>
 		<p name='game_info_details'>
 			Date: {{ session.game.date }}<br>
 			Location: {{ session.game.location }}<br>
@@ -91,42 +98,7 @@ Debug game_id: {{ session.game.game_id }}
 		</p>
 	</div>
 	
-	<div name='home_roster'>
-		<h2>{{ session.home_team.team_name }}</h2>
-		<ul>
-		{% for number, name, player_id, rospla_id in home %}
-			<li>{{ number }} - {{ name }}</li><button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button>
-		{% endfor %}
-		</ul>
-	</div>
-
-	<div name='away_roster'>
-		<h2>{{ session.away_team.team_name }}</h2>
-		<ul>
-		{% for number, name, player_id, rospla_id in away %}
-			<li>{{ number }} - {{ name }}</li><button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button>
-		{% endfor %}
-		</ul>
-	</div>
 
 {% endif %}
-<script>
-	$('.removeplayer').on('click', removePlayer);
 
-	function removePlayer(evt) {
-		alert('I clicked you! HA HA');
-	};
-
-	$('.addplayer').on('click', addPlayer);
-
-	function addPlayer(evt) {
-		alert('I clicked you to add! Woot!');
-	};
-
-	$('.searchplayer').on('click', searchPlayer);
-
-	function searchPlayer(evt) {
-		alert('I want to search for the right player!');
-	}
-</script>
 {% endblock %}
