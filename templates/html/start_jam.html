@@ -1,0 +1,37 @@
+{% extends 'html/web_base.html' %}
+{% block content %}
+<!-- Show current jam stored in session -->
+<div name='current_jam'>
+	Jam: {{ session.jam_num }}
+</div>
+
+<!-- Show current period stored in session -->
+<div name='current_period'>
+	Period: {{ session.period_num }}
+</div>
+
+<!-- Show home roster list of players-->
+<div name='home_roster'>
+	Team name: {{ session.home_team }}
+	<div name='home_roster_players'>
+		<ul>
+			{% for player in home %}
+			<li>
+				{{ player.name }} ({{ player.number }})
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+	<div name='home_sort_buttons'>
+		<form action='/show_roster/{{ session.home }}/alpha'>
+
+<!-- Show home positions-->
+
+<!-- Show away roster list of players-->
+
+<!-- Show away position -->
+
+
+
+{% endblock %}
+

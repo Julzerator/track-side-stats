@@ -1,7 +1,8 @@
 """Track Side Stats."""
 
 from jinja2 import StrictUndefined
-from flask import Flask, render_template, redirect, request, flash, session
+from flask import (Flask, render_template, redirect, request, flash, 
+                  session, jsonify)
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
 from model import (connect_to_db, db, User, LeagueUser, Team, Player, 
@@ -155,14 +156,16 @@ def new_league():
 @app.route('/league/<int:league_id>')
 def league_details(league_id):
     """ Displays the details of a League. """
-    # In development
+    # In testing
     
-    league = League.query.filter_by(league_id = league_id).one()
+    league = League.query.filter_by(league_id = league_id).first_or_404()
 
     league_teams = Team.query.filter_by(league_id = league_id).all()
 
-    league_players = # Get list of Player objects based on the teams
-                     # associated to the league.
+    league_players = []
+
+    for team in league_teams:
+        league_players.extend(team.players)
 
     return render_template("league_details.html", league=league,
         league_teams = league_teams, league_players = league_players)
@@ -220,11 +223,11 @@ def new_team():
 @app.route('/team/<int:team_id>')
 def team_details(team_id):
     """ Displays the details of a Team. """
-    # In development
+    # In testing
     
-    team = Team.query.filter_by(team_id = team_id).one()
+    team = Team.query.filter_by(team_id = team_id).first_or_404()
 
-    team_players = # Get list of Player objects based on the team.
+    team_players = team.players
 
     return render_template("team_details.html", team=team,
         team_players = team_players)
@@ -238,6 +241,14 @@ def team_list():
     teams = Team.query.all()
 
     return render_template("team_list.html", teams=teams)
+
+
+@app.route('/search_teams')
+def search_teams():
+    """Search the teams to return a list of teams."""
+    # In development
+
+    return redirect("/")
 
 
 @app.route('/load_team')
@@ -260,48 +271,52 @@ def load_team():
     return redirect("/")
 
 
-@app.route('/new_player', methods=['POST'])
+@app.route('/new_player', methods=['GET', 'POST'])
 def new_player():
     """ Add a new Player. """
     # In development
 
-    name = request.form["name_input"]
-    legal_fname = request.form["fname_input"]
-    legal_lname = request.form["lname_input"]
-    number = request.form["number_input"]
-    started = request.form["started_input"]
+    if request.method == 'POST':
+        name = request.form["name_input"]
+        legal_fname = request.form["fname_input"]
+        legal_lname = request.form["lname_input"]
+        number = request.form["number_input"]
+        started = request.form["started_input"]
 
-    # Check to see if there is another player with that
-    # exact name / number combo.
+        # Check to see if there is another player with that
+        # exact name / number combo.
 
-    players = db.session.query(Player)
-    player_check = players.filter(Player.name == name,
-        Player.number == number)
+        players = db.session.query(Player)
+        player_check = players.filter(Player.name == name,
+            Player.number == number)
 
-    if player_check.first() == None:
-        new_player = Player(name=name,
-            legal_fname=legal_fname,
-            legal_lname=legal_lname,
-            number=number,
-            started=started)
+        if player_check.first() == None:
+            new_player = Player(name=name,
+                legal_fname=legal_fname,
+                legal_lname=legal_lname,
+                number=number,
+                started=started)
 
-        db.session.add(new_player)
-        db.session.commit()
+            db.session.add(new_player)
+            db.session.commit()
+
+        else:
+            existing_player = player_check.first()
+            # Return that the player already exists
+            # Show the player name, number, location, and team (if available)
+
+        # team_id = request.form["team_id"]
+
+        # if team_id != None:
+        #     newest_player = players.filter(Player.name == name,
+        #     Player.number == number).first()
+        #     teamplayer = TeamPlayer(team_id=team_id,
+        #         player_id=newest_player.player_id)
+
+        return redirect("/")
 
     else:
-        existing_player = player_check.first()
-        # Return that the player already exists
-        # Show the player name, number, location, and team (if available)
-
-    team_id = request.form["team_id"]
-
-    if team_id != None:
-        newest_player = players.filter(Player.name == name,
-        Player.number == number).first()
-        teamplayer = TeamPlayer(team_id=team_id,
-            player_id=newest_player.player_id)
-
-    return redirect("/")
+        return render_template("/player.html")
 
 
 @app.route('/player_details/<int:player_id>')
@@ -309,7 +324,7 @@ def player_details(player_id):
     """ Show an existing Player. """
     # In development
     
-    player = Player.query.get(player_id)
+    player = Player.query.get_or_404(player_id)
 
     return redirect("/")
 
@@ -322,6 +337,220 @@ def player_update(player_id):
     flash("Working on implementing this!")
 
     return redirect("/")
+
+
+@app.route('/search_players')
+def search_players():
+    """Search the players to return a list of players."""
+    # In development
+
+    return redirect("/")
+
+
+@app.route('/to_new_game')
+def to_new_game():
+    """ Direct user to the game setup screen. """
+    # In development
+
+    flash("Working on implementing this!")
+
+    return render_template("html/game_setup.html")
+
+
+@app.route('/new_game', methods=['GET', 'POST'])
+def game_setup():
+    """ Create a new game. """
+    # In development
+
+    game = session.get('game')
+
+    if not game:
+        session['game'] = 'new'
+
+    if request.method == 'POST':
+        date = request.form["date_input"]
+        location = request.form["location_input"]
+        event_name = request.form["event_input"]
+        g_type = request.form["g_type_input"]
+        floor = request.form["floor_input"]
+
+        new_game = Game(date=date,
+                        location=location,
+                        event_name=event_name,
+                        g_type=g_type,
+                        floor=floor)
+
+        print new_game
+
+        db.session.add(new_game)
+        db.session.commit()
+
+        session['game'] = {
+                           'game_id' : new_game.game_id,
+                           'date' : new_game.date.isoformat(),
+                           'location' : new_game.location,
+                           'event_name' : new_game.event_name,
+                           'g_type' : new_game.g_type,
+                           'floor' : new_game.floor 
+        }
+
+        # Create Home Roster:
+        home_team_id = request.form["home_team"]
+        home_color = request.form["home_color_input"]
+        home = add_roster(new_game.game_id, home_color, home_team_id, 1)
+        hometeam = Team.query.get(home_team_id)
+
+        session['home_team'] = {
+                                'team_id' : home_team_id,
+                                'team_name' : hometeam.name,
+                                'roster_id' : home.roster_id
+        }
+
+        # Create Away Roster:
+        away_team_id = request.form["away_team"]
+        away_color = request.form["away_color_input"]
+        away = add_roster(new_game.game_id, away_color, away_team_id, 2)
+        awayteam = Team.query.get(away_team_id)
+
+        session['away_team'] = {
+                                'team_id' : away_team_id,
+                                'team_name' : awayteam.name,
+                                'roster_id' : away.roster_id
+        }
+
+        flash("Game Created!")
+
+        return render_template("html/game.html", home=home, away=away)
+
+    else:
+        teams = Team.query.all()
+        return render_template("html/game.html", teams=teams)
+
+
+def add_roster(game_id, color, team_id, ordinal):
+    """
+    Create a new roster for the game, adding all players from the
+    team indicated by the game and assigning whether home or opposing.
+    """
+    # In development
+
+    # Create the new roster.
+    new_roster = Roster(team_id=team_id,
+        game_id=game_id,
+        ordinal=ordinal,
+        color=color)
+
+    db.session.add(new_roster)
+    db.session.commit()
+
+    # Get the team
+    teamplayers = db.session.query(TeamPlayer).filter(
+        TeamPlayer.team_id == team_id).all()
+
+    print teamplayers
+
+    # Add the players to the roster.
+    for player in teamplayers:
+        rosterplayer = RosterPlayer(
+            roster_id=new_roster.roster_id,
+            player_id=player.player_id)
+        db.session.add(rosterplayer)
+    db.session.commit()
+
+    rosterplayers = db.session.query(Player.number, Player.name,
+        Player.player_id, RosterPlayer.rospla_id).join(RosterPlayer).filter(
+        RosterPlayer.roster_id == new_roster.roster_id).order_by(Player.name)
+
+    return rosterplayers
+
+
+@app.route('/change_roster/<change_type>')
+def change_roster(change_type):
+    """ Add/Remove Player from Roster. """
+    # In development
+    # Use AJAX to update just this part
+
+    if change_type == 'search':
+        players = Player.query.all()
+
+    elif change_type == 'add':
+        # Get the selected player_id, roster_id and add
+        # to RosterPlayer.
+
+    elif change_type == 'remove':
+        # Get the selected rospla_id and remove from db.
+
+    return redirect("/")
+
+
+@app.route('/show_roster/<roster_id>/<ordered_by>')
+def show_roster(roster_id, ordered_by):
+    """
+    Order roster by Derby Ordering.
+    - this is basically ordering by first number
+    in the player number, then by the second number
+    in the player number, etc... player numbers that
+    start with a letter are alphabetical at the end
+    of the list.
+    """
+    # In development
+    rosterplayers = db.session.query(Player.number, Player.name,
+        Player.player_id).join(RosterPlayer).filter(
+        RosterPlayer.roster_id == roster_id)
+        
+
+    if ordered_by == 'alpha':
+        rosterplayers = rosterplayers.order_by(Player.name)
+    elif ordered_by == 'num':
+        rosterplayers = rosterplayers.order_by(Player.number)
+    elif ordered_by == 'derby':
+        derby_order = []
+        # for player in rosterplayers:
+
+
+    return redirect("/")
+
+
+@app.route('/start_jam')
+def start_jam():
+    """
+    Set up the starting jam of each period.
+    This does not have the countdown clock of the between_jams.
+    """
+    # In development
+
+    session['jam_num'] = 1
+    session['period_num'] = 1
+
+
+    return render_template("/html/start_jam.html")
+
+
+@app.route('/jam_start')
+def jam_start():
+    """ Start a new jam. """
+    # In development
+
+    flash("Working on implementing this!")
+
+    return redirect("/")
+
+
+@app.route('/jam_end/<int:jam_id>')
+def jam_end(jam_id):
+    """ End jam. (call off or injury) """
+    # In development
+
+    flash("Working on implementing this!")
+
+    return redirect("/")
+
+@app.route('/between_jams')
+def between_jams():
+    """Screen to assign new players to positions."""
+    # In development
+
+    return render_template("html/between_jams.html")
 
 
 @app.route('/action', methods=['POST'])
@@ -377,193 +606,6 @@ def record_action():
     return redirect("/")
 
 
-@app.route('/jam_start')
-def jam_start():
-    """ Start a new jam. """
-    # In development
-
-    flash("Working on implementing this!")
-
-    return redirect("/")
-
-
-@app.route('/jam_end/<int:jam_id>')
-def jam_end(jam_id):
-    """ End jam. (call off or injury) """
-    # In development
-
-    flash("Working on implementing this!")
-
-    return redirect("/")
-
-@app.route('/between_jams')
-def between_jams():
-    """Screen to assign new players to positions."""
-    # In development
-
-    return render_template("html/between_jams.html")
-
-
-@app.route('/to_new_game')
-def to_new_game():
-    """ Direct user to the game setup screen. """
-    # In development
-
-    flash("Working on implementing this!")
-
-    return render_template("html/game.html")
-
-
-@app.route('/new_game', methods=['POST'])
-def game_setup():
-    """ Create a new game. """
-    # In development
-
-    date = request.form["date_input"]
-    location = request.form["location_input"]
-    event_name = request.form["event_input"]
-    g_type = request.form["g_type_input"]
-    floor = request.form["floor_input"]
-
-    new_game = Game(date=date,
-                    location=location,
-                    event_name=event_name,
-                    g_type=g_type,
-                    floor=floor)
-
-    print new_game
-
-    # db.session.add(new_game)
-
-    # db.session.commit()
-
-    flash("Working on implementing this!")
-
-    return redirect("/to_new_game")
-
-
-@app.route('/add_roster')
-def add_roster():
-    """
-    Create a new roster for the game, adding all players from the
-    team indicated by the game and assigning whether home or opposing.
-    """
-    # In development
-
-    game_id = 1 #for testing will be: session["game_id"]
-    color = 'Choose' # will be: request.form["date_input"]
-    team_id = request.form["team_id"]
-    ordinal = request.form["ordinal"] # either 1 (home) or 2 (away)
-
-    # Check to see if the game has an assigned home or away team already
-    existing = db.session.query(Roster).filter_by(game_id = 1).all()
-    home = existing.filter_by(ordinal=1).first()
-    away = existing.filter_by(ordinal=2).first()
-
-
-    if ordinal == 1:
-        if home:
-            # If so, delete the related roster/player data
-            old_roster = db.session.query(RosterPlayer).filter_by(
-                roster_id=home.roster_id)
-            db.session.delete(old_roster)
-            db.session.commit()
-            # Then create the new roster.
-            new_roster = Roster(team_id=team_id,
-                game_id=game_id,
-                ordinal=1,
-                color=color)
-
-            db.session.add(new_roster)
-            db.session.commit()
-
-    elif ordinal == 2:
-        if away:
-            # If so, delete the related roster/player data
-            old_roster = db.session.query(RosterPlayer).filter_by(
-                roster_id=away.roster_id)
-            db.session.delete(old_roster)
-            db.session.commit()
-            # Then create the new roster.
-            new_roster = Roster(team_id=team_id,
-                game_id=game_id,
-                ordinal=2,
-                color=color)
-
-            db.session.add(new_roster)
-            db.session.commit()
-
-    else:
-        # Then create the new roster.
-        new_roster = Roster(team_id=team_id,
-            game_id=game_id,
-            ordinal=ordinal,
-            color=color)
-
-        db.session.add(new_roster)
-        db.session.commit()
-
-
-    roster_team = Team.query.get(new_roster.team_id)
-    print roster_team.name
-
-    # Add this roster to session under ordinal number.
-    roster = session.query(Roster).filter(Roster.game_id == game_id, 
-        Roster.ordinal == ordinal, Roster.team_id == team_id).one()
-
-    session['team'+ ordinal] = roster.roster_id
-
-    print roster.roster_id
-
-    # Get the team
-    teamplayers = session.query(TeamPlayer).filter(
-        TeamPlayer.team_id == team_id).all()
-
-    print teamplayers
-
-    # Add the players to the roster.
-    for player in teamplayers:
-        rosterplayer = RosterPlayer(roster_id=roster.roster_id,
-            player_id=player.player_id)
-        db.session.add(rosterplayer)
-
-    db.session.commit()
-
-    # Print the roster to the screen.
-    if 'team1' in session:
-
-
-
-    return redirect("/")
-
-
-@app.route('/change_roster')
-def change_roster():
-    """ Add/Remove Player from Roster. """
-    # In development
-
-    flash("Working on implementing this!")
-
-    return redirect("/")
-
-
-@app.route('/show_roster')
-def show_roster():
-    """
-    Order roster by Derby Ordering.
-    - this is basically ordering by first number
-    in the player number, then by the second number
-    in the player number, etc... player numbers that
-    start with a letter are alphabetical at the end
-    of the list.
-    """
-    # In development
-
-    flash("Working on implementing this!")
-
-    return redirect("/")
-
-
 @app.route('/analyze')
 def analyze():
     """
@@ -579,6 +621,11 @@ def analyze():
 
     # Stretch goal
 
+    return redirect("/")
+
+@app.route('/clear_session')
+def clear_session():
+    session.clear()
     return redirect("/")
 
 

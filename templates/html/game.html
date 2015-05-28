@@ -1,33 +1,132 @@
 {% extends 'html/web_base.html' %}
 {% block content %}
 
-<h1>Create New Game</h1>
+{% if session.game == 'new' %}
+	<h1>Create New Game</h1>
 
-<form action="/new_game" method="POST">
-	Home Team: <input type='number' name='home_team' required>
-	Visiting Team: <input type='number' name='visiting_team' required><br>
-	Date of game: <input type='date' name='date_input' required><br>
-	Event Name: <input type='text' name='event_input'><br>
-	Location: <input type='text' name='location_input' required><br>
-	Game Type: 
-		<select name='g_type_input'>
-			<option value='A team'>A team</option>
-			<option value='B team'>B team</option>
-			<option value='home team'>home team</option>
-			<option value='rec league'>rec league</option>
-			<option value='scrimmage'>scrimmage</option>
-		</select><br>
-	Floor Type: 
-		<select name='floor_input'>
-			<option value='wood'>wood</option>
-			<option value='sport court'>sport court</option>
-			<option value='concrete'>concrete</option>
-			<option value='polished concrete'>polished concrete</option>
-			<option value='outdoors concrete'>outdoors concrete</option>
-		</select><br>
-		<br>
-	<input type='submit' value='Create Game'>
-</form>
+	<form action="/new_game" method="POST">
+		Home Team: 
+			<select name='home_team' title='Select Home Team' required>
+				{% for team in teams %}
+				<option value='{{ team.team_id }}'>{{ team.name }}</option>
+				{% endfor %}
+			</select>
+			Color: 
+				<select name='home_color_input' title='Select Color' required>
+					<option value='aqua'>Aqua</option>
+					<option value='black'>Black</option>
+					<option value='blue'>Blue</option>
+					<option value='fuchsia'>Fuchsia</option>
+					<option value='gray'>Gray</option>
+					<option value='green'>Green</option>
+					<option value='lime'>Lime</option>
+					<option value='maroon'>Maroon</option>
+					<option value='navy'>Navy</option>
+					<option value='olive'>Olive</option>
+					<option value='orange'>Orange</option>
+					<option value='purple'>Purple</option>
+					<option value='red'>Red</option>
+					<option value='silver'>Silver</option>
+					<option value='teal'>Teal</option>
+					<option value='white'>White</option>
+					<option value='yellow'>Yellow</option>
+				</select><br>
+		Visiting Team: 
+			<select name='away_team' title='Select Away Team' required>
+				{% for team in teams %}
+				<option value='{{ team.team_id }}'>{{ team.name }}</option>
+				{% endfor %}
+			</select>
+			Color: 
+				<select name='away_color_input' title='Select Color' required>
+					<option value='aqua'>Aqua</option>
+					<option value='black'>Black</option>
+					<option value='blue'>Blue</option>
+					<option value='fuchsia'>Fuchsia</option>
+					<option value='gray'>Gray</option>
+					<option value='green'>Green</option>
+					<option value='lime'>Lime</option>
+					<option value='maroon'>Maroon</option>
+					<option value='navy'>Navy</option>
+					<option value='olive'>Olive</option>
+					<option value='orange'>Orange</option>
+					<option value='purple'>Purple</option>
+					<option value='red'>Red</option>
+					<option value='silver'>Silver</option>
+					<option value='teal'>Teal</option>
+					<option value='white'>White</option>
+					<option value='yellow'>Yellow</option>
+				</select><br>
+		Date of game: <input type='date' name='date_input' required><br>
+		Event Name: <input type='text' name='event_input'><br>
+		Location: <input type='text' name='location_input' required><br>
+		Game Type: 
+			<select name='g_type_input' title='Select Game Type'>
+				<option value='A team'>A team</option>
+				<option value='B team'>B team</option>
+				<option value='home team'>home team</option>
+				<option value='rec league'>rec league</option>
+				<option value='scrimmage'>scrimmage</option>
+			</select><br>
+		Floor Type: 
+			<select name='floor_input' title='Select Floor Type'>
+				<option value='wood'>wood</option>
+				<option value='sport court'>sport court</option>
+				<option value='concrete'>concrete</option>
+				<option value='polished concrete'>polished concrete</option>
+				<option value='outdoors concrete'>outdoors concrete</option>
+			</select><br>
+			<br>
+		<input type='submit' value='Create Game'>
+	</form>
+{% else %}
+Debug game_id: {{ session.game.game_id }}
+	<div name='game_info'>
+		<h1>{{ session.game.event_name }}</h1>
+		<p name='game_info_details'>
+			Date: {{ session.game.date }}<br>
+			Location: {{ session.game.location }}<br>
+			<span name='game_info_gametype'>{{ session.game.g_type }}</span>
+			<span name='game_info_floortype'>{{ session.game.floor }}</span>
+		</p>
+	</div>
+	
+	<div name='home_roster'>
+		<h2>{{ session.home_team.team_name }}</h2>
+		<ul>
+		{% for number, name, player_id, rospla_id in home %}
+			<li>{{ number }} - {{ name }}</li><button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button>
+		{% endfor %}
+		</ul>
+	</div>
 
+	<div name='away_roster'>
+		<h2>{{ session.away_team.team_name }}</h2>
+		<ul>
+		{% for number, name, player_id, rospla_id in away %}
+			<li>{{ number }} - {{ name }}</li><button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button>
+		{% endfor %}
+		</ul>
+	</div>
 
+{% endif %}
+<script>
+	$('.removeplayer').on('click', removePlayer);
+
+	function removePlayer(evt) {
+		alert('I clicked you! HA HA');
+	};
+
+	$('.addplayer').on('click', addPlayer);
+
+	function addPlayer(evt) {
+		alert('I clicked you to add! Woot!');
+	};
+
+	$('.searchplayer').on('click', searchPlayer);
+
+	function searchPlayer(evt) {
+		alert('I want to search for the right player!');
+	}
+</script>
 {% endblock %}

@@ -11,18 +11,28 @@
       Disbanded: {{ league.disbanded }} <br>
     </div>
     <div name="league_teams">
-    <ul>
-      {% for team in league_teams %}
-        <li>
-            <a href="/team_details/{{ team.team_id }}">
-              {{ team.name }} ({{ team.t_type }})
-            </a>
-            <ul>
-              {% for player in  %}
-            </ul>
-        </li>
-      {% endfor %}
-    </ul>
+      <h3>Teams associated with the league</h3>
+      <ul>
+        {% for team in league_teams %}
+          <li>
+              <a href="/team_details/{{ team.team_id }}">
+                {{ team.name }} ({{ team.t_type }})
+              </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div name="league_players">
+      <h3>Players associated with the league</h3>
+      <ul>
+        {% for player in league_players %}
+          <li>
+              <a href="/player_details/{{ player.player_id }}">
+                {{ player.number }} - {{ player.name }}
+              </a>
+          </li>
+        {% endfor %}
+      </ul>
     </div>
 
 {% endblock %}

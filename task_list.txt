@@ -5,25 +5,24 @@ This is the task list for the Project "Track Side Stats"
 ===Working On===
 
 o- Final few Wireframe views
-o- Make League Views
-o- Make Team Views
 o- Make Player Views
-o- Hook up routes to League Views
-o- Hook up routes to Team Views
 o- Hook up routes to Player Views
 
 
 ===TODO===
 
 
-o- Add rosters to between jams screen
+o- Add rosters to starting jams screen
 o- Button to add a roster to a game
-o- Preload roster with selected team
 o- Alter roster functionality
 o- Get a count up timer working on the jam screen
 o- Assign players to position buttons
 o- Record actions via buttons
-
+o- Add Games to Player and Team Views
+o- Add Game Views
+o- Hook up routes to Game Views
+o- Add the search_players functionality
+o- Add the search_teams functionality
 
 ===DONE===
 
@@ -37,3 +36,15 @@ x- Create base jinja template for computer / web view
 x- Create base jinja template for full screen tablet view
 x- Stubbing out the server.py app for my Flask routes.
 x- Get a countdown timer working on the between jams screen
+x- Make League Views
+x- Make Team Views
+x- Preload roster with selected team
+x- Hook up routes to League Views
+x- Hook up routes to Team Views
+
+
+
+
+
+
+

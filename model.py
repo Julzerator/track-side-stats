@@ -112,8 +112,8 @@ class TeamPlayer(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<TeamPlayer id=%s team_name=%s player_name=%s>" % (self.teapla_id, 
-            teams.name, players.name)
+        return "<TeamPlayer id=%s team_id=%s player_id=%s>" % (self.teapla_id, 
+            self.team_id, self.player_id)
 
 
 class League(db.Model):
