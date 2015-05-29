@@ -16,7 +16,7 @@ Debug game_id: {{ session.game.game_id }}
 		<h2>{{ session.home_team.team_name }}</h2>
 		<ul>
 		{% for number, name, player_id, rospla_id, roster_id in home %}
-			<li>{{ number }} - {{ name }}</li><button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button>
+			<li>{{ number }} - {{ name }} <button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button></li>
 		{% endfor %}
 		</ul>
 	</div>
@@ -25,19 +25,23 @@ Debug game_id: {{ session.game.game_id }}
 		<h2>{{ session.away_team.team_name }}</h2>
 		<ul>
 		{% for number, name, player_id, rospla_id, roster_id in away %}
-			<li>{{ number }} - {{ name }}</li><button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button>
+			<li>{{ number }} - {{ name }} <button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button></li>
 		{% endfor %}
 		</ul>
 	</div>
+
+	<a href='/starting_jam'><button name='starting_jam'>Start</button></a>
 
 <script>
 	$('.removeplayer').on('click', removePlayer);
 
 	function removePlayer(evt) {
-		// $.post( "/change_roster/remove" , )
-		var rospla_id = 
-		alert(.attr( 'data-rosplaid' ));
-		console.log(evt);
+		var rospla_id = this.dataset.rosplaid;
+		console.log(this.parentNode);
+		this.parentNode.remove();
+		$.post( "/change_roster/remove/" + rospla_id );
+		alert('Player removed.');
+		console.log(this.dataset.rosplaid);
 	};
 
 	$('.addplayer').on('click', addPlayer);
@@ -51,5 +55,6 @@ Debug game_id: {{ session.game.game_id }}
 	function searchPlayer(evt) {
 		alert('I want to search for the right player!');
 	}
+
 </script>
 {% endblock %}

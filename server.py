@@ -370,8 +370,6 @@ def new_game():
                         g_type=g_type,
                         floor=floor)
 
-        print new_game
-
         db.session.add(new_game)
         db.session.commit()
 
@@ -449,6 +447,7 @@ def add_roster(game_id, color, team_id, ordinal):
 
     return new_roster
 
+
 def get_roster(team):
 
     rosterplayers = []
@@ -476,6 +475,35 @@ def get_roster(team):
 
     return rosterplayers
 
+
+@app.route('/show_roster/<roster_id>/<ordered_by>')
+def show_roster(roster_id, ordered_by):
+    """
+    Order roster by Derby Ordering.
+    - this is basically ordering by first number
+    in the player number, then by the second number
+    in the player number, etc... player numbers that
+    start with a letter are alphabetical at the end
+    of the list.
+    """
+    # In development
+    rosterplayers = db.session.query(Player.number, Player.name,
+        Player.player_id).join(RosterPlayer).filter(
+        RosterPlayer.roster_id == roster_id)
+        
+
+    if ordered_by == 'alpha':
+        rosterplayers = rosterplayers.order_by(Player.name)
+    elif ordered_by == 'num':
+        rosterplayers = rosterplayers.order_by(Player.number)
+    elif ordered_by == 'derby':
+        derby_order = []
+        # for player in rosterplayers:
+
+
+    return redirect("/")
+
+
 @app.route('/game_setup')
 def game_setup():
 
@@ -485,63 +513,41 @@ def game_setup():
     return render_template('html/game_setup.html', home=home, away=away)
 
 
-@app.route('/change_roster/<change_type>')
-def change_roster(change_type):
-    """ Add/Remove Player from Roster. """
+@app.route('/change_roster/search')
+def change_roster():
+    """ Search Players to add to Roster. """
     # In development
     # Use AJAX to update just this part
 
-    if change_type == 'search':
-        players = Player.query.all()
-        json_players = []
-        for player in players:
-            each = {
-                'player_id' : player.player_id,
-                'number' : player.number,
-                'name' : player.name
-            }
-            json_players.extend(each)
+    players = Player.query.all()
+    json_players = []
+    for player in players:
+        each = {
+            'player_id' : player.player_id,
+            'number' : player.number,
+            'name' : player.name
+        }
+        json_players.extend(each)
 
-        return json_players
-
-    elif change_type == 'add':
-        # Get the selected player_id, roster_id and add
-        # to RosterPlayer.
-        pass
-
-    elif change_type == 'remove':
-        # Get the selected rospla_id and remove from db.
-        return redirect('/game_setup')
-
-    return redirect("/")
+    return json_players
 
 
-# @app.route('/show_roster/<roster_id>/<ordered_by>')
-# def show_roster(roster_id, ordered_by):
-#     """
-#     Order roster by Derby Ordering.
-#     - this is basically ordering by first number
-#     in the player number, then by the second number
-#     in the player number, etc... player numbers that
-#     start with a letter are alphabetical at the end
-#     of the list.
-#     """
-#     # In development
-#     rosterplayers = db.session.query(Player.number, Player.name,
-#         Player.player_id).join(RosterPlayer).filter(
-#         RosterPlayer.roster_id == roster_id)
-        
+@app.route('/change_roster/remove/<int:rospla_id>', methods=['POST'])
+def remove_from_roster(rospla_id):
+    """On a button click removes the player from the roster."""
 
-#     if ordered_by == 'alpha':
-#         rosterplayers = rosterplayers.order_by(Player.name)
-#     elif ordered_by == 'num':
-#         rosterplayers = rosterplayers.order_by(Player.number)
-#     elif ordered_by == 'derby':
-#         derby_order = []
-#         # for player in rosterplayers:
+    rm = RosterPlayer.query.get(rospla_id)
+    db.session.delete(rm)
+    db.session.commit()
+
+    return redirect("/game_setup")
 
 
-#     return redirect("/")
+@app.route('/change_roster/add/<int:roster_id>/<int:player_id>')
+def add_to_roster(roster_id, player_id):
+    # Get the selected player_id, roster_id and add
+    # to RosterPlayer.
+    pass
 
 
 @app.route('/starting_jam')
@@ -567,14 +573,95 @@ def starting_jam():
     return render_template("/html/start_jam.html", home=home, away=away)
 
 
-@app.route('/jam_start')
+@app.route('/jam_start', methods=['POST'])
 def jam_start():
     """ Start a new jam. """
     # In development
+    # Create the jam
+    jam_num = session.get('jam_num')
+    period = session.get('period_num')
+    game = session.get('game')
 
-    flash("Working on implementing this!")
+    new_jam = Jam(
+                 period=period,
+                 j_start=datetime.now(),
+                 number=jam_num,
+                 game_id=game['game_id'],
+                 )
 
-    return redirect("/")
+    db.session.add(new_jam)
+    db.session.commit()
+
+    # Set the current jam rosters
+    pivot_id = request.form["pivot"]
+    pivot = JamPosition(
+                        jam_id=new_jam.jam_id,
+                        position='pivot',
+                        player_id=pivot_id
+                        )
+    db.session.add(pivot)
+    session['pivot'] = pivot_id
+
+    blocker1_id = request.form["blocker1"]
+    blocker1 = JamPosition(
+                        jam_id=new_jam.jam_id,
+                        position='blocker',
+                        player_id=blocker1_id
+                        )
+    db.session.add(blocker1)
+    session['blocker1'] = blocker1_id
+
+    blocker2_id = request.form["blocker2"]
+    blocker2 = JamPosition(
+                        jam_id=new_jam.jam_id,
+                        position='blocker',
+                        player_id=blocker2_id
+                        )
+    db.session.add(blocker2)
+    session['blocker2'] = blocker2_id
+
+    blocker3_id = request.form["blocker3"]
+    blocker3 = JamPosition(
+                        jam_id=new_jam.jam_id,
+                        position='blocker',
+                        player_id=blocker3_id
+                        )
+    db.session.add(blocker3)
+    session['blocker3'] = blocker3_id
+
+    jammer_id = request.form["jammer"]
+    jammer = JamPosition(
+                        jam_id=new_jam.jam_id,
+                        position='jammer',
+                        player_id=jammer_id
+                        )
+    db.session.add(jammer)
+    session['jammer'] = jammer_id
+
+    away_jammer_id = request.form["away_jammer"]
+    away_jammer = JamPosition(
+                        jam_id=new_jam.jam_id,
+                        position='jammer',
+                        player_id=away_jammer_id
+                        )
+    db.session.add(away_jammer)
+    session['away_jammer'] = away_jammer_id
+
+    away_pivot_id = request.form["away_pivot"]
+    if away_pivot_id:
+        away_pivot = JamPosition(
+                            jam_id=new_jam.jam_id,
+                            position='pivot',
+                            player_id=away_pivot_id
+                            )
+        db.session.add(away_pivot)
+        session['away_pivot'] = away_jammer_id
+    else:
+        session.pop('away_pivot')
+
+    db.session.commit()
+
+    return redirect("/during_jam")
 
 
 @app.route('/jam_end/<int:jam_id>')
@@ -663,6 +750,7 @@ def analyze():
     # Stretch goal
 
     return redirect("/")
+
 
 @app.route('/clear_session')
 def clear_session():

@@ -9,5 +9,30 @@
 
 <!-- If a timeout is called, stop the timer and ask what type of timeout. -->
 
+<script>
+    window.onload = function() {
+        var countdown = Tock({
+            countdown: true,
+            interval: 100,
+            callback: function () {
+                console.log(countdown.lap() / 1000);
+                $('#countdown_clock').text(timer.msToTime(countdown.lap()));
+            },
+            complete: function () {
+                console.log('end');
+                alert("Time's up!");
+            }
+        });
+
+        $(document).ready( function () {
+				countdown.start($('#countdown_clock').text());
+		});
+
+        $('#timeout').on('click', function () {
+            countdown.stop();
+            // Start a new jam not incrementing the jam number and marking it a timeout.
+        });
+    }
+    </script>
 {% endblock %}
 

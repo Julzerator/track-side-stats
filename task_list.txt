@@ -45,6 +45,6 @@ x- Hook up routes to Team Views
 
 
 
-
-
+SCRATCHBOARD===========
+Adding titles to Jinja pages: http://stackoverflow.com/questions/2104957/in-jinja2-how-can-i-use-macros-in-combination-with-block-tags
 

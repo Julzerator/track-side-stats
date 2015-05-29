@@ -1,5 +1,6 @@
-{% extends 'html/web_base.html' %}
+{% extends 'html/game_base.html' %}
 {% block content %}
+<form action='jam_start' method='POST'>
 <!-- Show current jam stored in session -->
 <div name='current_jam'>
 	Jam: {{ session.jam_num }}
@@ -15,23 +16,103 @@
 	Team name: {{ session.home_team }}
 	<div name='home_roster_players'>
 		<ul>
-			{% for player in home %}
+			{% for number, name, player_id, rospla_id, roster_id in home %}
+			<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}'  class='home_player'>
+					<p>{{ name }} ({{ number }})</p>
+			</div>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+
+<!-- Show home positions-->
+<div name='home_positions'>
+	<h2>Assign positions:</h2>
+	<div name='pivot' class='home_position'>
+		Pivot
+		<input type='hidden' name='pivot' value='' class='pos'>
+	</div>
+	<div name='blocker_1' class='home_position'>
+		Blocker
+		<input type='hidden' name='blocker1' value='' class='pos'>
+	</div>
+	<div name='blocker_2' class='home_position'>
+		Blocker
+		<input type='hidden' name='blocker2' value='' class='pos'>
+	</div>
+	<div name='blocker_3' class='home_position'>
+		Blocker
+		<input type='hidden' name='blocker3' value='' class='pos'>
+	</div>
+	<div name='jammer' class='home_position'>
+		Jammer
+		<input type='hidden' name='jammer' value='' class='pos'>
+	</div>
+</div>
+
+<!-- Show away roster list of players-->
+<div name='away_roster'>
+	Team name: {{ session.away_team }}
+	<div name='away_roster_players'>
+		<ul>
+			{% for number, name, player_id, rospla_id, roster_id in away %}
 			<li>
-				{{ player.name }} ({{ player.number }})
+				<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}' class='away_player'>
+					<p>{{ name }} ({{ number }})</p>
+				</div>
 			</li>
 			{% endfor %}
 		</ul>
 	</div>
-	<div name='home_sort_buttons'>
-		<form action='/show_roster/{{ session.home }}/alpha'>
-
-<!-- Show home positions-->
-
-<!-- Show away roster list of players-->
+</div>
 
 <!-- Show away position -->
+<div name='away_positions'>
+	<h2>Assign positions:</h2>
+	<div name='away_jammer' class='away_position'>
+		Jammer
+		<input type='hidden' name='away_jammer' value=''>
+	</div>
+	<div name='away_pivot' class='away_position'>
+		Pivot
+		<input type='hidden' name='away_pivot' value=''>
+	</div>
+</div>
+
+<input type='submit' value='Start Jam'>
+
+</form>
 
 
+<script>
+  $(function() {
+    $( ".home_player" ).draggable({
+    	start: function( event, ui ) {
+    		$( ".away_position" ).droppable( "disable" );
+    		$( ".home_position" ).droppable( "enable" );
+    		var player_id = this.dataset.playerid;
+    		console.log(player_id)
+	      	var name = this.dataset.name;
+	      	var number = this.dataset.number;
+    	}
+    });
+    $( ".home_position" ).droppable({
+      drop: function( event, ui ) {
+        $( this ).children('.pos').attr('value', player_id );
+      }
+    });
+  });
+  $(function() {
+    $( ".away_player" ).draggable();
+    $( ".away_position" ).droppable({
+      drop: function( event, ui ) {
+        $( this )
+          .addClass( "ui-state-highlight" )
+          .find( "p" )
+            .html( "Dropped!" );
+      }
+    });
+  });
+  </script>
 
 {% endblock %}
-
