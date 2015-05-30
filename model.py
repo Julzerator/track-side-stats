@@ -204,6 +204,7 @@ class Jam(db.Model):
     period = db.Column(db.Integer, nullable=False)
     j_start = db.Column(db.DateTime, nullable=True)
     j_end = db.Column(db.DateTime, nullable=True)
+    end_type = db.Column(db.String(20), nullable=True)
     number = db.Column(db.Integer, nullable=True)
     game_id = db.Column(db.Integer, db.ForeignKey('games.game_id'), nullable=False)
     timeout_type = db.Column(db.String(25), nullable=True)

@@ -583,95 +583,128 @@ def jam_start():
     game = session.get('game')
 
     new_jam = Jam(
-                 period=period,
+                 period=int(period),
                  j_start=datetime.now(),
-                 number=jam_num,
-                 game_id=game['game_id'],
+                 number=int(jam_num),
+                 game_id=int(game['game_id'])
                  )
 
     db.session.add(new_jam)
     db.session.commit()
 
     # Set the current jam rosters
+    # Pivot
     pivot_id = request.form["pivot"]
-    pivot = JamPosition(
-                        jam_id=new_jam.jam_id,
-                        position='pivot',
-                        player_id=pivot_id
-                        )
+    pivot = add_jamposition(new_jam.jam_id,
+                           'pivot', int(pivot_id))
     db.session.add(pivot)
     session['pivot'] = pivot_id
 
+    # Blocker 1
     blocker1_id = request.form["blocker1"]
-    blocker1 = JamPosition(
-                        jam_id=new_jam.jam_id,
-                        position='blocker',
-                        player_id=blocker1_id
-                        )
+    blocker1 = add_jamposition(new_jam.jam_id,
+                              'blocker', int(blocker1_id))
     db.session.add(blocker1)
     session['blocker1'] = blocker1_id
 
+    # Blocker 2
     blocker2_id = request.form["blocker2"]
-    blocker2 = JamPosition(
-                        jam_id=new_jam.jam_id,
-                        position='blocker',
-                        player_id=blocker2_id
-                        )
+    blocker2 = add_jamposition(new_jam.jam_id,
+                              'blocker', int(blocker2_id))
     db.session.add(blocker2)
     session['blocker2'] = blocker2_id
 
+    # Blocker 3
     blocker3_id = request.form["blocker3"]
-    blocker3 = JamPosition(
-                        jam_id=new_jam.jam_id,
-                        position='blocker',
-                        player_id=blocker3_id
-                        )
+    blocker3 = add_jamposition(new_jam.jam_id,
+                              'blocker', int(blocker3_id))
     db.session.add(blocker3)
     session['blocker3'] = blocker3_id
 
+    # Jammer
     jammer_id = request.form["jammer"]
-    jammer = JamPosition(
-                        jam_id=new_jam.jam_id,
-                        position='jammer',
-                        player_id=jammer_id
-                        )
+    jammer = add_jamposition(new_jam.jam_id,
+                            'jammer', int(jammer_id))
     db.session.add(jammer)
     session['jammer'] = jammer_id
 
+    # Away Jammer
     away_jammer_id = request.form["away_jammer"]
-    away_jammer = JamPosition(
-                        jam_id=new_jam.jam_id,
-                        position='jammer',
-                        player_id=away_jammer_id
-                        )
+    away_jammer = add_jamposition(new_jam.jam_id,
+                                 'jammer', int(away_jammer_id))
     db.session.add(away_jammer)
     session['away_jammer'] = away_jammer_id
 
+    # Away Pivot (not required)
     away_pivot_id = request.form["away_pivot"]
     if away_pivot_id:
-        away_pivot = JamPosition(
-                            jam_id=new_jam.jam_id,
-                            position='pivot',
-                            player_id=away_pivot_id
-                            )
+        away_pivot = add_jamposition(new_jam.jam_id,
+                                    'pivot', int(away_pivot_id))
         db.session.add(away_pivot)
         session['away_pivot'] = away_jammer_id
     else:
-        session.pop('away_pivot')
+        session['away_pivot'] = 'Not Recorded'
 
     db.session.commit()
 
     return redirect("/during_jam")
 
 
-@app.route('/jam_end/<int:jam_id>')
+def add_jamposition(jam_id, position, player_id):
+    """ Add the player and what position they are playing this jam."""
+
+    jamposition = JamPosition(
+                            jam_id=jam_id,
+                            position=position,
+                            player_id=player_id
+                            )
+    return jamposition
+
+
+@app.route('/during_jam')
+def during_jam():
+    """Show the current jam with players in their positions."""
+    pivot = session.get('pivot')
+    blocker1 = session.get('blocker1')
+    blocker2 = session.get('blocker2')
+    blocker3 = session.get('blocker3')
+    jammer = session.get('jammer')
+    away_jammer = session.get('away_jammer')
+    away_pivot = session.get('away_pivot')
+
+    pivot = Player.query.get(pivot)
+    blocker1 = Player.query.get(blocker1)
+    blocker2 = Player.query.get(blocker2)
+    blocker3 = Player.query.get(blocker3)
+    jammer = Player.query.get(jammer)
+    away_jammer = Player.query.get(away_jammer)
+    if away_pivot != 'Not Recorded':
+        away_pivot = Player.query.get(away_pivot)
+    else:
+        away_pivot = 'Not Recorded'
+
+    return render_template('html/during_jam.html',
+                           pivot=pivot,
+                           blocker1=blocker1,
+                           blocker2=blocker2,
+                           blocker3=blocker3,
+                           jammer=jammer,
+                           away_jammer=away_jammer,
+                           away_pivot=away_pivot
+                           )
+
+
+@app.route('/jam_end/<int:jam_id>', methods=['POST'])
 def jam_end(jam_id):
     """ End jam. (call off or injury) """
     # In development
+    
+    
+    current_jam = Jam.query.get(jam_id)
+    current_jam.j_end = datetime.now()
+    session['jam_num'] += 1
 
-    flash("Working on implementing this!")
-
-    return redirect("/")
+    return redirect("/between_jams")
 
 @app.route('/between_jams')
 def between_jams():

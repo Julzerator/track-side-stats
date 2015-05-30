@@ -17,9 +17,11 @@
 	<div name='home_roster_players'>
 		<ul>
 			{% for number, name, player_id, rospla_id, roster_id in home %}
-			<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}'  class='home_player'>
-					<p>{{ name }} ({{ number }})</p>
-			</div>
+			<li>
+				<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}'  class='home_player'>
+						<p class='player'>{{ name }} ({{ number }})</p>
+				</div>
+			</li>
 			{% endfor %}
 		</ul>
 	</div>
@@ -29,23 +31,28 @@
 <div name='home_positions'>
 	<h2>Assign positions:</h2>
 	<div name='pivot' class='home_position'>
-		Pivot
+		<p class='pos_label'>Pivot</p>
+		<p class='player'></p>
 		<input type='hidden' name='pivot' value='' class='pos'>
 	</div>
 	<div name='blocker_1' class='home_position'>
-		Blocker
+		<p class='pos_label'>Blocker</p>
+		<p class='player'></p>
 		<input type='hidden' name='blocker1' value='' class='pos'>
 	</div>
 	<div name='blocker_2' class='home_position'>
-		Blocker
+		<p class='pos_label'>Blocker</p>
+		<p class='player'></p>
 		<input type='hidden' name='blocker2' value='' class='pos'>
 	</div>
 	<div name='blocker_3' class='home_position'>
-		Blocker
+		<p class='pos_label'>Blocker</p>
+		<p class='player'></p>
 		<input type='hidden' name='blocker3' value='' class='pos'>
 	</div>
 	<div name='jammer' class='home_position'>
-		Jammer
+		<p class='pos_label'>Jammer</p>
+		<p class='player'></p>
 		<input type='hidden' name='jammer' value='' class='pos'>
 	</div>
 </div>
@@ -58,7 +65,7 @@
 			{% for number, name, player_id, rospla_id, roster_id in away %}
 			<li>
 				<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}' class='away_player'>
-					<p>{{ name }} ({{ number }})</p>
+					<p class='player'>{{ name }} ({{ number }})</p>
 				</div>
 			</li>
 			{% endfor %}
@@ -70,12 +77,14 @@
 <div name='away_positions'>
 	<h2>Assign positions:</h2>
 	<div name='away_jammer' class='away_position'>
-		Jammer
-		<input type='hidden' name='away_jammer' value=''>
+		<p class='pos_label'>Jammer</p>
+		<p class='player'></p>
+		<input type='hidden' name='away_jammer' value='' class='pos'>
 	</div>
 	<div name='away_pivot' class='away_position'>
-		Pivot
-		<input type='hidden' name='away_pivot' value=''>
+		<p class='pos_label'>Pivot</p>
+		<p class='player'></p>
+		<input type='hidden' name='away_pivot' value='' class='pos'>
 	</div>
 </div>
 
@@ -86,31 +95,46 @@
 
 <script>
   $(function() {
+  	$( ".home_player" ).draggable({revert:true});
     $( ".home_player" ).draggable({
     	start: function( event, ui ) {
-    		$( ".away_position" ).droppable( "disable" );
+       		$( ".away_position" ).droppable( "disable" );
     		$( ".home_position" ).droppable( "enable" );
-    		var player_id = this.dataset.playerid;
-    		console.log(player_id)
-	      	var name = this.dataset.name;
-	      	var number = this.dataset.number;
     	}
     });
     $( ".home_position" ).droppable({
       drop: function( event, ui ) {
+      	var player_id = ui.helper.data().playerid;
+      	var name = ui.helper.data().name;
+      	var number = ui.helper.data().number;
+      	var player = ui.helper.children('.player').html();
+      	$( 'input[value="'+player_id+'"]').siblings('.player').html('');
+      	$( 'input[value="'+player_id+'"]').attr('value', '');
         $( this ).children('.pos').attr('value', player_id );
-      }
+        $( this ).children('.player').html(player);
+
+    	}
     });
   });
   $(function() {
-    $( ".away_player" ).draggable();
+    $( ".away_player" ).draggable({revert:true});
+    $( ".away_player" ).draggable({
+    	start: function( event, ui ) {
+       		$( ".home_position" ).droppable( "disable" );
+    		$( ".away_position" ).droppable( "enable" );
+    	}
+    });
     $( ".away_position" ).droppable({
       drop: function( event, ui ) {
-        $( this )
-          .addClass( "ui-state-highlight" )
-          .find( "p" )
-            .html( "Dropped!" );
-      }
+        var player_id = ui.helper.data().playerid;
+      	var name = ui.helper.data().name;
+      	var number = ui.helper.data().number;
+      	var player = ui.helper.children('.player').html();
+      	$( 'input[value="'+player_id+'"]').siblings('.player').html('');
+      	$( 'input[value="'+player_id+'"]').attr('value', '');
+        $( this ).children('.pos').attr('value', player_id );
+        $( this ).children('.player').html(player);
+	    }
     });
   });
   </script>
