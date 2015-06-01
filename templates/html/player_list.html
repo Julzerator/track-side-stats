@@ -1,0 +1,15 @@
+{% extends 'html/web_base.html' %}
+{% block content %}
+
+    <h2>Players</h2>
+    <ul>
+      {% for player in players %}
+          <li>
+              <a href="/player_details/{{ player.player_id }}">
+                {{ player.name }} ({{ player.number }})
+              </a>
+          </li>
+      {% endfor %}
+    </ul>
+
+{% endblock %}

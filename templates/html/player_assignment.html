@@ -1,5 +1,9 @@
 {% extends 'html/game_base.html' %}
 {% block content %}
+{% if session.jam_num > 1 %}
+{% include "html/between_jams.html" %}
+{% endif %}
+
 <form action='jam_start' method='POST'>
 <!-- Show current jam stored in session -->
 <div name='current_jam'>
@@ -13,7 +17,7 @@
 
 <!-- Show home roster list of players-->
 <div name='home_roster'>
-	Team name: {{ session.home_team }}
+	Team name: {{ session.home_team.team_name }}
 	<div name='home_roster_players'>
 		<ul>
 			{% for number, name, player_id, rospla_id, roster_id in home %}
@@ -59,7 +63,7 @@
 
 <!-- Show away roster list of players-->
 <div name='away_roster'>
-	Team name: {{ session.away_team }}
+	Team name: {{ session.away_team.team_name }}
 	<div name='away_roster_players'>
 		<ul>
 			{% for number, name, player_id, rospla_id, roster_id in away %}

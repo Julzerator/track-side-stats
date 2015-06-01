@@ -202,7 +202,7 @@ class Jam(db.Model):
 
     jam_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     period = db.Column(db.Integer, nullable=False)
-    j_start = db.Column(db.DateTime, nullable=True)
+    j_start = db.Column(db.DateTime, default=datetime.utcnow(), nullable=True)
     j_end = db.Column(db.DateTime, nullable=True)
     end_type = db.Column(db.String(20), nullable=True)
     number = db.Column(db.Integer, nullable=True)
@@ -251,7 +251,7 @@ class Action(db.Model):
     player_id = db.Column(db.Integer, db.ForeignKey('players.player_id'), nullable=False)
     play = db.Column(db.String(20), nullable=False)
     points = db.Column(db.Integer, nullable=True)
-    timestamp = db.Column(db.DateTime, default=datetime.now(), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow(), nullable=False)
 
     jams = db.relationship('Jam', backref='actions')
     players = db.relationship('Player', backref='actions')

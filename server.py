@@ -229,7 +229,7 @@ def team_details(team_id):
 
     team_players = team.players
 
-    return render_template("team_details.html", team=team,
+    return render_template("html/team_details.html", team=team,
         team_players = team_players)
 
 
@@ -240,7 +240,7 @@ def team_list():
 
     teams = Team.query.all()
 
-    return render_template("team_list.html", teams=teams)
+    return render_template("html/team_list.html", teams=teams)
 
 
 @app.route('/search_teams')
@@ -316,7 +316,17 @@ def new_player():
         return redirect("/")
 
     else:
-        return render_template("/player.html")
+        return render_template("html/player_list.html")
+
+
+@app.route('/players')
+def player_list():
+    """Displaying a list of all teams"""
+    # In testing
+
+    players = Player.query.all()
+
+    return render_template("html/player_list.html", players=players)
 
 
 @app.route('/player_details/<int:player_id>')
@@ -326,7 +336,7 @@ def player_details(player_id):
     
     player = Player.query.get_or_404(player_id)
 
-    return redirect("/")
+    return render_template("html/player_details.html", player=player)
 
 
 @app.route('/player/<int:player_id>')
@@ -550,27 +560,22 @@ def add_to_roster(roster_id, player_id):
     pass
 
 
-@app.route('/starting_jam')
-def starting_jam():
+@app.route('/player_assignment')
+def player_assignment():
     """
     Set up the starting jam of each period.
     This does not have the countdown clock of the between_jams.
     """
     # In development
 
-    session['jam_num'] = 1
-
-    period = session.get('period_num')
-    if not period:
-        session['period_num'] = 1
-    else:
-        session['period_num'] += 1
+    session['jam_num'] = session.get('jam_num', 1)
+    session['period_num'] = session.get('period_num', 1)
 
     home = get_roster('home')
     away = get_roster('away')
 
 
-    return render_template("/html/start_jam.html", home=home, away=away)
+    return render_template("/html/player_assignment.html", home=home, away=away)
 
 
 @app.route('/jam_start', methods=['POST'])
@@ -584,13 +589,14 @@ def jam_start():
 
     new_jam = Jam(
                  period=int(period),
-                 j_start=datetime.now(),
                  number=int(jam_num),
                  game_id=int(game['game_id'])
                  )
 
     db.session.add(new_jam)
     db.session.commit()
+
+    session['jam_id'] = new_jam.jam_id
 
     # Set the current jam rosters
     # Pivot
@@ -694,24 +700,18 @@ def during_jam():
                            )
 
 
-@app.route('/jam_end/<int:jam_id>', methods=['POST'])
-def jam_end(jam_id):
+@app.route('/jam_end/<end_type>', methods=['POST'])
+def jam_end(end_type):
     """ End jam. (call off or injury) """
     # In development
     
-    
+    jam_id = session.get('jam_id')
     current_jam = Jam.query.get(jam_id)
-    current_jam.j_end = datetime.now()
+    current_jam.j_end = datetime.utcnow()
+    current_jam.end_type = end_type
     session['jam_num'] += 1
 
-    return redirect("/between_jams")
-
-@app.route('/between_jams')
-def between_jams():
-    """Screen to assign new players to positions."""
-    # In development
-
-    return render_template("html/between_jams.html")
+    return redirect("/player_assignment")
 
 
 @app.route('/action', methods=['POST'])
@@ -728,43 +728,139 @@ def record_action():
     # o Draw cut
     # o Whip
     # o Block assist
-    # o Penalty (in queue? question to answer.)
+    # o Penalty
     
-
-
     # Record an action (jammer)
     # -- These are coded into the JS
+
     # o Star pass. UGH 
     # o Award Lead Jammer
     # o Call off a jam (by jammer)
     # o Award points
-    # o Lost lead
     # o Not lead first pass
     # o Lap number?
     # o Penalty
 
     jam_id = session.get("jam_id")
-    player_id = session.get("player_id")
-    play = session.get("play")
-    timestamp = datetime.utcnow()
+    player_id = int(request.form['player_id'])
+    play = request.form['play']
+    player = Player.query.get(player_id)
 
-    points = session["points"]
+    if play == 'driveout':
+        action = Action(jam_id=jam_id,
+                    player_id=player_id,
+                    play=play
+                    )
+        db.session.add(action)
+        db.session.commit()
 
-    action = Action(jam_id=jam_id,
-        player_id=player_id,
-        play=play,
-        timestamp=timestamp)
+        message = "Driveout Recorded for %s", player.name
+        return message
 
-    # Remove this data from the session:
-    db.session.add(action)
-    db.session.commit()
+    elif play == 'knockdown':
+        action = Action(jam_id=jam_id,
+                    player_id=player_id,
+                    play=play
+                    )
+        db.session.add(action)
+        db.session.commit()
 
-    session.pop('play', None)
-    session.pop('points', None)
+        message = "Knock Down Recorded for %s", player.name
+        return message
 
-    flash("Working on implementing this!")
+    elif play == 'screen':
+        action = Action(jam_id=jam_id,
+                    player_id=player_id,
+                    play=play
+                    )
+        db.session.add(action)
+        db.session.commit()
 
-    return redirect("/")
+        message = "Screen Recorded for %s", player.name
+        return message
+
+    elif play == 'whip':
+        action = Action(jam_id=jam_id,
+                    player_id=player_id,
+                    play=play
+                    )
+        db.session.add(action)
+        db.session.commit()
+
+        message = "Whip Recorded for %s", player.name
+        return message
+
+    elif play == 'blockassist':
+        action = Action(jam_id=jam_id,
+                    player_id=player_id,
+                    play=play
+                    )
+        db.session.add(action)
+        db.session.commit()
+
+        message = "Block Assist Recorded for %s", player.name
+        return message
+
+    elif play == 'penalty':
+        action = Action(jam_id=jam_id,
+                    player_id=player_id,
+                    play=play
+                    )
+        db.session.add(action)
+        db.session.commit()
+
+        message = "Penalty Recorded for %s", player.name
+        return message
+
+    elif play == 'starpass':
+        action = Action(jam_id=jam_id,
+                    player_id=player_id,
+                    play=play
+                    )
+        db.session.add(action)
+        db.session.commit()
+
+        message = "Star Pass Recorded for %s", player.name
+        return message
+
+    elif play == 'leadjam':
+        action = Action(jam_id=jam_id,
+                    player_id=player_id,
+                    play=play
+                    )
+        db.session.add(action)
+        db.session.commit()
+
+        message = "Lead Jammer Recorded for %s", player.name
+        return message
+
+    elif play == 'calloff':
+        action = Action(jam_id=jam_id,
+                    player_id=player_id,
+                    play=play
+                    )
+        db.session.add(action)
+        db.session.commit()
+
+        message = "Call Off Recorded for %s", player.name
+        return message
+
+    elif play == 'points':
+        points = request.form['points']
+        action = Action(jam_id=jam_id,
+                    player_id=player_id,
+                    play=play,
+                    points=points
+                    )
+        db.session.add(action)
+        db.session.commit()
+
+        message = "%s Points Recorded for %s", (points, player.name)
+        return message
+
+    else:
+        message = "This action doesn't exist. Nothing recorded."
+        return message
 
 
 @app.route('/analyze')

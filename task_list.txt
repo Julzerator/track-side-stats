@@ -4,20 +4,10 @@ This is the task list for the Project "Track Side Stats"
 
 ===Working On===
 
-o- Final few Wireframe views
-o- Make Player Views
-o- Hook up routes to Player Views
-
+o- Record actions via buttons (the big one)
 
 ===TODO===
 
-
-o- Add rosters to starting jams screen
-o- Button to add a roster to a game
-o- Alter roster functionality
-o- Get a count up timer working on the jam screen
-o- Assign players to position buttons
-o- Record actions via buttons
 o- Add Games to Player and Team Views
 o- Add Game Views
 o- Hook up routes to Game Views
@@ -41,6 +31,14 @@ x- Make Team Views
 x- Preload roster with selected team
 x- Hook up routes to League Views
 x- Hook up routes to Team Views
+x- Get a count up timer working on the jam screen
+x- Assign players to position buttons
+x- Make Player Views
+x- Hook up routes to Player Views
+x- Add rosters to starting jams screen
+
+===WILL NOT DO===
+xxx- Final few Wireframe views
 
 
 

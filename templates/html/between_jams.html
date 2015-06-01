@@ -1,22 +1,14 @@
-{% extends 'html/game_base.html' %}
-{% block content %}
 <!-- Show timer starting is when page loads counting down from 30 sec -->
 <span id="countdown_clock">00:30</span>
-
-<!-- Show home roster list of players-->
-
-<!-- Show away roster list of players-->
-
-<!-- If a timeout is called, stop the timer and ask what type of timeout. -->
 
 <script>
     window.onload = function() {
         var countdown = Tock({
             countdown: true,
-            interval: 100,
+            interval: 60,
             callback: function () {
                 console.log(countdown.lap() / 1000);
-                $('#countdown_clock').text(timer.msToTime(countdown.lap()));
+                $('#countdown_clock').text(countdown.msToTime(countdown.lap()));
             },
             complete: function () {
                 console.log('end');
@@ -34,5 +26,3 @@
         });
     }
     </script>
-{% endblock %}
-
