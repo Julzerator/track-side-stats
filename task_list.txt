@@ -4,7 +4,8 @@ This is the task list for the Project "Track Side Stats"
 
 ===Working On===
 
-o- Record actions via buttons (the big one)
+o- Finish the player creation
+o- Derby order is just a alpha on Player.number. Add session key for sort type and implement ordering. If changed during a jam, send ajax call and reload just those or just use underscore to do this!
 
 ===TODO===
 
@@ -36,6 +37,9 @@ x- Assign players to position buttons
 x- Make Player Views
 x- Hook up routes to Player Views
 x- Add rosters to starting jams screen
+x- Record actions via drops (the big one)
+x- make changes to dom via drops
+x- create the targets for drops on drag start
 
 ===WILL NOT DO===
 xxx- Final few Wireframe views

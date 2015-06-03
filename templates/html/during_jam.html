@@ -1,205 +1,82 @@
 {% extends 'html/game_base.html' %}
 {% block content %}
-<div name='timer'>
-    <p id='clockface'>00:00.000</p>
-</div>
-<div name='timer'>
-    <p id='jamtimer'>00:30</p>
-</div>
-<div id='injury'>
-    <form action='/jam_end/injury' method='POST'>
-        <input class='injury' type='submit' value='Call for Injury'>
-    </form>
-</div>
-<div id='timeranout' hidden>
-    <form action='/jam_end/timeranout' method='POST'>
-        <input class='timeranout' type='submit' value='Assign Next Jam'>
-    </form>
-</div>
+<div class='container'>
 
-<div name='pivot' class='control' data-playerid='{{pivot.player_id}}'>
-    <div id='pivot_player' class='player'>
-        Pivot<br>
-        {{ pivot.name }} ({{ pivot.number }})
+    <div class='row'>
+        <div name='timer'>
+            <p id='clockface'>00:00.000</p>
+        </div>
     </div>
-    <div id='pivot_actions' hidden class='actions'>
-        <div class='driveout target'>Drive Out</div>
-        <div class='knockdown target'>Knock Down</div>
-        <div class='screen target'>Screen</div>
-        <div class='whip target'>Whip</div>
-        <div class='blockassist target'>Block Assist</div>
-        <div class='penalty target'>Penalty</div>
+    <div class='row'>
+        <div name='timer'>
+            <p id='jamtimer'>00:30</p>
+        </div>
     </div>
-</div>
-<div name='blocker1' class='control' data-playerid='{{blocker1.player_id}}'>
-    <div id='blocker1_player' class='player'>
-        Blocker<br>
-        {{ blocker1.name }} ({{ blocker1.number }})
+    <div class='row'>
+        <div id='message'></div>
     </div>
-    <div id='blocker1_actions' hidden class='actions'>
-        <div class='driveout target'>Drive Out</div>
-        <div class='knockdown target'>Knock Down</div>
-        <div class='screen target'>Screen</div>
-        <div class='whip target'>Whip</div>
-        <div class='blockassist target'>Block Assist</div>
-        <div class='penalty target'>Penalty</div>
+
+    <div class='row'>
+        <div id='injury'>
+            <form action='/jam_end/injury' method='POST'>
+                <input class='injury' type='submit' value='Call for Injury'>
+            </form>
+        </div>
+        <div id='timeranout' hidden>
+            <form action='/jam_end/timeranout' method='POST'>
+                <input class='timeranout' type='submit' value='Assign Next Jam'>
+            </form>
+        </div>
     </div>
-</div>
-<div name='blocker2' class='control' data-playerid='{{blocker2.player_id}}'>
-    <div id='blocker2_player' class='player'>
-        Blocker<br>
-        {{ blocker2.name }} ({{ blocker2.number }})
-    </div>
-    <div id='blocker2_actions' hidden class='actions'>
-        <div class='driveout target'>Drive Out</div>
-        <div class='knockdown target'>Knock Down</div>
-        <div class='screen target'>Screen</div>
-        <div class='whip target'>Whip</div>
-        <div class='blockassist target'>Block Assist</div>
-        <div class='penalty target'>Penalty</div>
-    </div>
-</div>
-<div name='blocker3' class='control' data-playerid='{{blocker3.player_id}}'>
-    <div id='blocker3_player' class='player'>
-        Blocker<br>
-        {{ blocker3.name }} ({{ blocker3.number }})
-    </div>
-    <div id='blocker3_actions' hidden class='actions'>
-        <div class='driveout target'>Drive Out</div>
-        <div class='knockdown target'>Knock Down</div>
-        <div class='screen target'>Screen</div>
-        <div class='whip target'>Whip</div>
-        <div class='blockassist target'>Block Assist</div>
-        <div class='penalty target'>Penalty</div>
-    </div>
-</div>
-<div name='jammer' class='control' data-playerid='{{jammer.player_id}}'>
-    <div id='jammer_player' class='player'>
-        Jammer<br>
-        {{ jammer.name }} ({{ jammer.number }})
-    </div>
-    <div id='jammer_actions' hidden class='actions'>
-        <div class='starpass target'>Star Pass</div>
-        <div class='leadjam target'>Lead Jammer</div>
-        <div class='calloff target' hidden>Call Off Jam</div>
-        <div class='points target' hidden>Points</div>
-        <div class='initialpass target'>Initial Pass</div>
-        <div class='penalty target'>Penalty</div>
-    </div>
-</div>
-<div name='away_jammer' class='control' data-playerid='{{away_jammer.player_id}}'>
-    <div id='away_jammer_player' class='player'>
-        Opposing Jammer<br>
-        {{ away_jammer.name }} ({{ away_jammer.number }})
-    </div>
-    <div id='away_jammer_actions' hidden class='actions'>
-        <div class='starpass target'>Star Pass</div>
-        <div class='leadjam target'>Lead Jammer</div>
-        <div class='calloff target' hidden>Call Off Jam</div>
-        <div class='points target' hidden>Points</div>
-        <div class='initialpass target'>Initial Pass</div>
-        <div class='penalty target'>Penalty</div>
+
+    <div class='row'>
+        <div id='pivot' class='control blocker' data-playerid='{{pivot.player_id}}'>
+            <div id='pivot_player' class='player'>
+                Pivot<br>
+                {{ pivot.name }} ({{ pivot.number }})
+            </div>
+            <div id='pivot_actions' class='actions'></div>
+        </div>
+        <div id='blocker1' class='control blocker' data-playerid='{{blocker1.player_id}}'>
+            <div id='blocker1_player' class='player'>
+                Blocker<br>
+                {{ blocker1.name }} ({{ blocker1.number }})
+            </div>
+            <div id='blocker1_actions' class='actions'></div>
+        </div>
+        <div id='blocker2' class='control blocker' data-playerid='{{blocker2.player_id}}'>
+            <div id='blocker2_player' class='player'>
+                Blocker<br>
+                {{ blocker2.name }} ({{ blocker2.number }})
+            </div>
+            <div id='blocker2_actions' class='actions'></div>
+        </div>
+        <div id='blocker3' class='control blocker' data-playerid='{{blocker3.player_id}}'>
+            <div id='blocker3_player' class='player'>
+                Blocker<br>
+                {{ blocker3.name }} ({{ blocker3.number }})
+            </div>
+            <div id='blocker3_actions' class='actions'></div>
+        </div>
+        <div id='jammer' class='control jammer' data-playerid='{{jammer.player_id}}'>
+            <div id='jammer_player' class='player'>
+                Jammer<br>
+                {{ jammer.name }} ({{ jammer.number }})
+            </div>
+            <div id='jammer_actions' class='actions'></div>
+        </div>
+        <div id='away_jammer' class='control jammer' data-playerid='{{away_jammer.player_id}}'>
+            <div id='away_jammer_player' class='player'>
+                Opposing Jammer<br>
+                {{ away_jammer.name }} ({{ away_jammer.number }})
+            </div>
+            <div id='away_jammer_actions' class='actions'></div>
+        </div>
     </div>
 </div>
 
 <script>
-// Timers for screen.
-window.onload = function() {
-	var timer = Tock({
-        interval: 100,
-        callback: function () {
-            $('#clockface').html(timer.msToTime(timer.lap()));
-        }
-    });
-    $(document).ready( function () {
-        timer.start($('#clockface').html());
-    });
 
-    var jamtimer = Tock({
-        interval: 100,
-        countdown: true,
-        callback: function () {
-            $('#jamtimer').html(jamtimer.msToTime(jamtimer.lap()));
-        },
-        complete: function () {
-            $('#timeranout').show();
-        }
-    });
-    $(document).ready( function () {
-        jamtimer.start($('#jamtimer').html());
-    });
-};
-
-// Drag/Drop functionality to send actions.
-$(function() {
-    $( ".player" ).draggable({revert:true});
-    $( ".player" ).draggable({
-        start: function( event, ui ) {
-            $( this ).siblings().show();
-        }
-    });
-    $( ".target" ).droppable({
-        drop: function( event, ui ) {
-            var player_id = $( this ).parent().parent().data().playerid;
-            console.log(player_id);
-            if ($( this ).hasClass('driveout')) {
-                // put driveout actions here
-                $.post( '/action', { 
-                    player_id : player_id,
-                    play : 'driveout'
-                    })
-                    .done(function( message ) {
-                        $('#message').html(result).fadeOut( 3000 );
-                    })
-                    .fail(function() {
-                        $('#message').html('Action was not processed').fadeOut( 3000 );
-                    })
-            };
-            if ($( this ).hasClass('knockdown')) {
-                // put knockdown actions here
-                alert("Knockdown!");
-            };
-            if ($( this ).hasClass('screen')) {
-                // put screen actions here
-                alert("Screen!");
-            };
-            if ($( this ).hasClass('whip')) {
-                // put whip actions here
-                alert("Whip!");
-            };
-            if ($( this ).hasClass('blockassist')) {
-                // put blockassist actions here
-                alert("Block Assist!");
-            };
-            if ($( this ).hasClass('penalty')) {
-                // put penalty actions here
-                alert("Penalty!");
-            };
-            if ($( this ).hasClass('starpass')) {
-                // put starpass actions here
-                alert("Star Pass!");
-            };
-            if ($( this ).hasClass('leadjam')) {
-                // put leadjam actions here
-                alert("Lead Jammer!");
-            };
-            if ($( this ).hasClass('calloff')) {
-                // put calloff actions here
-                alert("Call Off!");
-            };
-            if ($( this ).hasClass('points')) {
-                // put points actions here
-                alert("Points!");
-            };
-            if ($( this ).hasClass('initialpass')) {
-                // put initialpass actions here
-                $('#message').html('Initial Pass Complete!').fadeOut( 3000 );
-            };
-            $( '.actions' ).hide();
-
-        }
-    });
-  });
 
 </script>
 {% endblock %}

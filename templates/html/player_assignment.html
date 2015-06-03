@@ -6,24 +6,24 @@
 
 <form action='jam_start' method='POST'>
 <!-- Show current jam stored in session -->
-<div name='current_jam'>
+<div id='current_jam'>
 	Jam: {{ session.jam_num }}
 </div>
 
 <!-- Show current period stored in session -->
-<div name='current_period'>
+<div id='current_period'>
 	Period: {{ session.period_num }}
 </div>
 
 <!-- Show home roster list of players-->
-<div name='home_roster'>
+<div id='home_roster'>
 	Team name: {{ session.home_team.team_name }}
-	<div name='home_roster_players'>
+	<div id='home_roster_players'>
 		<ul>
 			{% for number, name, player_id, rospla_id, roster_id in home %}
 			<li>
 				<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}'  class='home_player'>
-						<p class='player'>{{ name }} ({{ number }})</p>
+						<p class='roster'>{{ name }} ({{ number }})</p>
 				</div>
 			</li>
 			{% endfor %}
@@ -32,44 +32,44 @@
 </div>
 
 <!-- Show home positions-->
-<div name='home_positions'>
+<div id='home_positions'>
 	<h2>Assign positions:</h2>
-	<div name='pivot' class='home_position'>
+	<div id='pivot' class='home_position'>
 		<p class='pos_label'>Pivot</p>
-		<p class='player'></p>
-		<input type='hidden' name='pivot' value='' class='pos'>
+		<p class='player_pos'></p>
+		<input type='hidden' id='pivot' name='pivot' value='' class='pos'>
 	</div>
-	<div name='blocker_1' class='home_position'>
+	<div id='blocker_1' class='home_position'>
 		<p class='pos_label'>Blocker</p>
-		<p class='player'></p>
-		<input type='hidden' name='blocker1' value='' class='pos'>
+		<p class='player_pos'></p>
+		<input type='hidden' id='blocker1' name='blocker1' value='' class='pos'>
 	</div>
-	<div name='blocker_2' class='home_position'>
+	<div id='blocker_2' class='home_position'>
 		<p class='pos_label'>Blocker</p>
-		<p class='player'></p>
-		<input type='hidden' name='blocker2' value='' class='pos'>
+		<p class='player_pos'></p>
+		<input type='hidden' id='blocker2' name='blocker2' value='' class='pos'>
 	</div>
-	<div name='blocker_3' class='home_position'>
+	<div id='blocker_3' class='home_position'>
 		<p class='pos_label'>Blocker</p>
-		<p class='player'></p>
-		<input type='hidden' name='blocker3' value='' class='pos'>
+		<p class='player_pos'></p>
+		<input type='hidden' id='blocker3' name='blocker3' value='' class='pos'>
 	</div>
-	<div name='jammer' class='home_position'>
+	<div id='jammer' class='home_position'>
 		<p class='pos_label'>Jammer</p>
-		<p class='player'></p>
-		<input type='hidden' name='jammer' value='' class='pos'>
+		<p class='player_pos'></p>
+		<input type='hidden' id='jammer' name='jammer' value='' class='pos'>
 	</div>
 </div>
 
 <!-- Show away roster list of players-->
-<div name='away_roster'>
+<div id='away_roster'>
 	Team name: {{ session.away_team.team_name }}
-	<div name='away_roster_players'>
+	<div id='away_roster_players'>
 		<ul>
 			{% for number, name, player_id, rospla_id, roster_id in away %}
 			<li>
 				<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}' class='away_player'>
-					<p class='player'>{{ name }} ({{ number }})</p>
+					<p class='roster'>{{ name }} ({{ number }})</p>
 				</div>
 			</li>
 			{% endfor %}
@@ -78,17 +78,17 @@
 </div>
 
 <!-- Show away position -->
-<div name='away_positions'>
+<div id='away_positions'>
 	<h2>Assign positions:</h2>
-	<div name='away_jammer' class='away_position'>
+	<div id='away_jammer' class='away_position'>
 		<p class='pos_label'>Jammer</p>
-		<p class='player'></p>
-		<input type='hidden' name='away_jammer' value='' class='pos'>
+		<p class='player_pos'></p>
+		<input type='hidden' id='away_jammer' name='away_jammer' value='' class='pos'>
 	</div>
-	<div name='away_pivot' class='away_position'>
+	<div id='away_pivot' class='away_position'>
 		<p class='pos_label'>Pivot</p>
-		<p class='player'></p>
-		<input type='hidden' name='away_pivot' value='' class='pos'>
+		<p class='player_pos'></p>
+		<input type='hidden' id='away_pivot' name='away_pivot' value='' class='pos'>
 	</div>
 </div>
 
@@ -97,50 +97,6 @@
 </form>
 
 
-<script>
-  $(function() {
-  	$( ".home_player" ).draggable({revert:true});
-    $( ".home_player" ).draggable({
-    	start: function( event, ui ) {
-       		$( ".away_position" ).droppable( "disable" );
-    		$( ".home_position" ).droppable( "enable" );
-    	}
-    });
-    $( ".home_position" ).droppable({
-      drop: function( event, ui ) {
-      	var player_id = ui.helper.data().playerid;
-      	var name = ui.helper.data().name;
-      	var number = ui.helper.data().number;
-      	var player = ui.helper.children('.player').html();
-      	$( 'input[value="'+player_id+'"]').siblings('.player').html('');
-      	$( 'input[value="'+player_id+'"]').attr('value', '');
-        $( this ).children('.pos').attr('value', player_id );
-        $( this ).children('.player').html(player);
 
-    	}
-    });
-  });
-  $(function() {
-    $( ".away_player" ).draggable({revert:true});
-    $( ".away_player" ).draggable({
-    	start: function( event, ui ) {
-       		$( ".home_position" ).droppable( "disable" );
-    		$( ".away_position" ).droppable( "enable" );
-    	}
-    });
-    $( ".away_position" ).droppable({
-      drop: function( event, ui ) {
-        var player_id = ui.helper.data().playerid;
-      	var name = ui.helper.data().name;
-      	var number = ui.helper.data().number;
-      	var player = ui.helper.children('.player').html();
-      	$( 'input[value="'+player_id+'"]').siblings('.player').html('');
-      	$( 'input[value="'+player_id+'"]').attr('value', '');
-        $( this ).children('.pos').attr('value', player_id );
-        $( this ).children('.player').html(player);
-	    }
-    });
-  });
-  </script>
 
 {% endblock %}

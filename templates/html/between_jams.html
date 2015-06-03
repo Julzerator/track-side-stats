@@ -1,28 +1,27 @@
 <!-- Show timer starting is when page loads counting down from 30 sec -->
 <span id="countdown_clock">00:30</span>
-
 <script>
     window.onload = function() {
-        var countdown = Tock({
-            countdown: true,
-            interval: 60,
-            callback: function () {
-                console.log(countdown.lap() / 1000);
-                $('#countdown_clock').text(countdown.msToTime(countdown.lap()));
-            },
-            complete: function () {
-                console.log('end');
-                alert("Time's up!");
-            }
-        });
+        var lineup_countdown = Tock({
+	        countdown: true,
+	        interval: 60,
+	        callback: function () {
+	            // console.log(lineup_countdown.lap() / 1000);
+	            $('#countdown_clock').text(lineup_countdown.msToTime(lineup_countdown.lap()));
+	        },
+	        complete: function () {
+	            console.log('end');
+	            alert("Time's up!");
+	        }
+	    });
 
-        $(document).ready( function () {
-				countdown.start($('#countdown_clock').text());
-		});
+	    $(document).ready( function () {
+	        lineup_countdown.start($('#countdown_clock').text());
+	    });
 
-        $('#timeout').on('click', function () {
-            countdown.stop();
-            // Start a new jam not incrementing the jam number and marking it a timeout.
-        });
+	    $('#timeout').on('click', function () {
+	        lineup_countdown.stop();
+	        // Start a new jam not incrementing the jam number and marking it a timeout.
+	    });
     }
     </script>

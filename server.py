@@ -378,7 +378,8 @@ def new_game():
                         location=location,
                         event_name=event_name,
                         g_type=g_type,
-                        floor=floor)
+                        floor=floor
+                        )
 
         db.session.add(new_game)
         db.session.commit()
@@ -389,7 +390,7 @@ def new_game():
                            'location' : new_game.location,
                            'event_name' : new_game.event_name,
                            'g_type' : new_game.g_type,
-                           'floor' : new_game.floor 
+                           'floor' : new_game.floor
         }
 
         # Create Home Roster:
@@ -746,6 +747,11 @@ def record_action():
     play = request.form['play']
     player = Player.query.get(player_id)
 
+    print '*' * 80
+    print jam_id
+    print player_id
+    print play
+
     if play == 'driveout':
         action = Action(jam_id=jam_id,
                     player_id=player_id,
@@ -754,7 +760,7 @@ def record_action():
         db.session.add(action)
         db.session.commit()
 
-        message = "Driveout Recorded for %s", player.name
+        message = "Driveout Recorded for %s" % player.name
         return message
 
     elif play == 'knockdown':
@@ -765,7 +771,7 @@ def record_action():
         db.session.add(action)
         db.session.commit()
 
-        message = "Knock Down Recorded for %s", player.name
+        message = "Knock Down Recorded for %s" % player.name
         return message
 
     elif play == 'screen':
@@ -776,7 +782,7 @@ def record_action():
         db.session.add(action)
         db.session.commit()
 
-        message = "Screen Recorded for %s", player.name
+        message = "Screen Recorded for %s" % player.name
         return message
 
     elif play == 'whip':
@@ -787,7 +793,7 @@ def record_action():
         db.session.add(action)
         db.session.commit()
 
-        message = "Whip Recorded for %s", player.name
+        message = "Whip Recorded for %s" % player.name
         return message
 
     elif play == 'blockassist':
@@ -798,7 +804,7 @@ def record_action():
         db.session.add(action)
         db.session.commit()
 
-        message = "Block Assist Recorded for %s", player.name
+        message = "Block Assist Recorded for %s" % player.name
         return message
 
     elif play == 'penalty':
@@ -809,7 +815,7 @@ def record_action():
         db.session.add(action)
         db.session.commit()
 
-        message = "Penalty Recorded for %s", player.name
+        message = "Penalty Recorded for %s" % player.name
         return message
 
     elif play == 'starpass':
@@ -820,7 +826,7 @@ def record_action():
         db.session.add(action)
         db.session.commit()
 
-        message = "Star Pass Recorded for %s", player.name
+        message = "Star Pass Recorded for %s" % player.name
         return message
 
     elif play == 'leadjam':
@@ -831,7 +837,7 @@ def record_action():
         db.session.add(action)
         db.session.commit()
 
-        message = "Lead Jammer Recorded for %s", player.name
+        message = "Lead Jammer Recorded for %s" % player.name
         return message
 
     elif play == 'calloff':
@@ -842,7 +848,7 @@ def record_action():
         db.session.add(action)
         db.session.commit()
 
-        message = "Call Off Recorded for %s", player.name
+        message = "Call Off Recorded for %s" % player.name
         return message
 
     elif play == 'points':
@@ -855,7 +861,18 @@ def record_action():
         db.session.add(action)
         db.session.commit()
 
-        message = "%s Points Recorded for %s", (points, player.name)
+        message = "%s Points Recorded for %s" % (points, player.name)
+        return message
+
+    elif play == 'initialpass':
+        action = Action(jam_id=jam_id,
+                    player_id=player_id,
+                    play=play
+                    )
+        db.session.add(action)
+        db.session.commit()
+
+        message = "Initial Pass Recorded for %s" % player.name
         return message
 
     else:

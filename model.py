@@ -3,10 +3,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-# This is the connection to the SQLite database; we're getting this through
-# the Flask-SQLAlchemy helper library. On this, we can find the `session`
-# object, where we do most of our interactions (like committing, etc.)
-
 db = SQLAlchemy()
 
 
@@ -187,6 +183,8 @@ class Game(db.Model):
     event_name = db.Column(db.String(100), nullable=True)
     g_type = db.Column(db.String(100), nullable=False)
     floor = db.Column(db.String(100), nullable=False)
+    # home_score = db.Column(db.Integer, default=0)
+    # away_score = db.Column(db.Integer, default=0)
     
     def __repr__(self):
         """Provide helpful representation when printed."""
