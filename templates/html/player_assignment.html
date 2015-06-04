@@ -1,100 +1,125 @@
 {% extends 'html/game_base.html' %}
 {% block content %}
-{% if session.jam_num > 1 %}
-{% include "html/between_jams.html" %}
-{% endif %}
+<div class='container'>
+	<div class='row'>
+		<form action='jam_start' method='POST'>
+		<div class='col-md-4'>
+			<!-- Show current jam stored in session -->
+			<div id='current_jam'>
+				Jam: {{ session.jam_num }}
+			</div>
+		</div>
 
-<form action='jam_start' method='POST'>
-<!-- Show current jam stored in session -->
-<div id='current_jam'>
-	Jam: {{ session.jam_num }}
+		<div class='col-md-4'>
+			<!-- Show current period stored in session -->
+			<div id='current_period'>
+				Period: {{ session.period_num }}
+			</div>
+		</div>
+		<div class='col-md-2'>
+			{% if session.jam_num > 1 %}
+			{% include "html/between_jams.html" %}
+			{% endif %}
+		</div>
+		<div class='col-md-2'>
+			<input type='submit' value='Start Jam'>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='col-md-3'>
+			<h3>Team name: {{ session.home_team.team_name }}</h3>
+		</div>
+		<div class='col-md-3'>
+			<h3>Assign positions:</h3>
+		</div>
+		<div class='col-md-3'>
+			<h3>Team name: {{ session.away_team.team_name }}</h3>
+		</div>
+		<div class='col-md-3'>
+			<h3>Assign positions:</h3>
+		</div>
+	</div>
+	<div class='row'>
+		<!-- Show home roster list of players-->
+		<div id='home_roster' class='col-md-3'>
+			<div id='home_roster_players' class='roster'>
+				<input type='hidden' id='home_team_info' data-color="{{ session['home_team']['color'] }}"></input>
+				<ul>
+					{% for number, name, player_id, rospla_id, roster_id in home %}
+					<li>
+						<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}'  class='home_player'>
+								<p class='roster'>{{ name }} ({{ number }})</p>
+						</div>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+
+		<!-- Show home positions-->
+		<div id='home_positions' class='col-md-3'>
+			<div id='pivot' class='home_position'>
+				<p class='pos_label'>Pivot</p>
+				<p class='player_pos'></p>
+				<input type='hidden' id='pivot' name='pivot' value='' class='pos'>
+			</div>
+			<div id='blocker_1' class='home_position'>
+				<p class='pos_label'>Blocker</p>
+				<p class='player_pos'></p>
+				<input type='hidden' id='blocker1' name='blocker1' value='' class='pos'>
+			</div>
+			<div id='blocker_2' class='home_position'>
+				<p class='pos_label'>Blocker</p>
+				<p class='player_pos'></p>
+				<input type='hidden' id='blocker2' name='blocker2' value='' class='pos'>
+			</div>
+			<div id='blocker_3' class='home_position'>
+				<p class='pos_label'>Blocker</p>
+				<p class='player_pos'></p>
+				<input type='hidden' id='blocker3' name='blocker3' value='' class='pos'>
+			</div>
+			<div id='jammer' class='home_position'>
+				<p class='pos_label'>Jammer</p>
+				<p class='player_pos'></p>
+				<input type='hidden' id='jammer' name='jammer' value='' class='pos'>
+			</div>
+		</div>
+
+		<!-- Show away roster list of players-->
+		<div id='away_roster' class='col-md-3'>
+			<div id='away_roster_players' class='roster'>
+				<input type='hidden' id='away_team_info' data-color="{{ session['away_team']['color'] }}"></input>
+				<ul>
+					{% for number, name, player_id, rospla_id, roster_id in away %}
+					<li>
+						<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}' class='away_player'>
+							<p class='roster'>{{ name }} ({{ number }})</p>
+						</div>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+
+		<!-- Show away position -->
+		<div id='away_positions' class='col-md-3'>
+			<div id='away_jammer' class='away_position'>
+				<p class='pos_label'>Jammer</p>
+				<p class='player_pos'></p>
+				<input type='hidden' id='away_jammer' name='away_jammer' value='' class='pos'>
+			</div>
+			<div id='away_pivot' class='away_position'>
+				<p class='pos_label'>Pivot</p>
+				<p class='player_pos'></p>
+				<input type='hidden' id='away_pivot' name='away_pivot' value='' class='pos'>
+			</div>
+		</div>
+
+		
+
+		</form>
+	</div>
 </div>
-
-<!-- Show current period stored in session -->
-<div id='current_period'>
-	Period: {{ session.period_num }}
-</div>
-
-<!-- Show home roster list of players-->
-<div id='home_roster'>
-	Team name: {{ session.home_team.team_name }}
-	<div id='home_roster_players'>
-		<ul>
-			{% for number, name, player_id, rospla_id, roster_id in home %}
-			<li>
-				<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}'  class='home_player'>
-						<p class='roster'>{{ name }} ({{ number }})</p>
-				</div>
-			</li>
-			{% endfor %}
-		</ul>
-	</div>
-</div>
-
-<!-- Show home positions-->
-<div id='home_positions'>
-	<h2>Assign positions:</h2>
-	<div id='pivot' class='home_position'>
-		<p class='pos_label'>Pivot</p>
-		<p class='player_pos'></p>
-		<input type='hidden' id='pivot' name='pivot' value='' class='pos'>
-	</div>
-	<div id='blocker_1' class='home_position'>
-		<p class='pos_label'>Blocker</p>
-		<p class='player_pos'></p>
-		<input type='hidden' id='blocker1' name='blocker1' value='' class='pos'>
-	</div>
-	<div id='blocker_2' class='home_position'>
-		<p class='pos_label'>Blocker</p>
-		<p class='player_pos'></p>
-		<input type='hidden' id='blocker2' name='blocker2' value='' class='pos'>
-	</div>
-	<div id='blocker_3' class='home_position'>
-		<p class='pos_label'>Blocker</p>
-		<p class='player_pos'></p>
-		<input type='hidden' id='blocker3' name='blocker3' value='' class='pos'>
-	</div>
-	<div id='jammer' class='home_position'>
-		<p class='pos_label'>Jammer</p>
-		<p class='player_pos'></p>
-		<input type='hidden' id='jammer' name='jammer' value='' class='pos'>
-	</div>
-</div>
-
-<!-- Show away roster list of players-->
-<div id='away_roster'>
-	Team name: {{ session.away_team.team_name }}
-	<div id='away_roster_players'>
-		<ul>
-			{% for number, name, player_id, rospla_id, roster_id in away %}
-			<li>
-				<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}' class='away_player'>
-					<p class='roster'>{{ name }} ({{ number }})</p>
-				</div>
-			</li>
-			{% endfor %}
-		</ul>
-	</div>
-</div>
-
-<!-- Show away position -->
-<div id='away_positions'>
-	<h2>Assign positions:</h2>
-	<div id='away_jammer' class='away_position'>
-		<p class='pos_label'>Jammer</p>
-		<p class='player_pos'></p>
-		<input type='hidden' id='away_jammer' name='away_jammer' value='' class='pos'>
-	</div>
-	<div id='away_pivot' class='away_position'>
-		<p class='pos_label'>Pivot</p>
-		<p class='player_pos'></p>
-		<input type='hidden' id='away_pivot' name='away_pivot' value='' class='pos'>
-	</div>
-</div>
-
-<input type='submit' value='Start Jam'>
-
-</form>
 
 
 

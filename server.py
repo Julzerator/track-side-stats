@@ -919,4 +919,6 @@ if __name__ == "__main__":
     # Use the DebugToolbar
     DebugToolbarExtension(app)
 
-    app.run()
+    app.run(host='0.0.0.0')
+
+

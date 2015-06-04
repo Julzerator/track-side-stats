@@ -80,6 +80,8 @@ $(function() {
     console.log(away_color);
     $('.home').css('background', home_color);
     $('.away').css('background', away_color);
+    $('.home_position').css('border-color', home_color);
+    $('.away_position').css('border-color', away_color);
 });
 
 // Drag/Drop functionality to send actions.
@@ -99,14 +101,25 @@ $(function() {
                 $("<div class='whip dropmehere' data-play='whip'>Whip</div>").droppable(dropActions).appendTo( $(there) );
                 $("<div class='blockassist dropmehere' data-play='blockassist'>Block Assist</div>").droppable(dropActions).appendTo( $(there) );
                 $("<div class='penalty dropmehere' data-play='penalty'>Penalty</div>").droppable(dropActions).appendTo( $(there) );
-                console.log("blocker buttons made");
             } else if (there_class == 'control home jammer' || there_class == 'control away jammer') {
-                $("<div class='leadjam dropmehere' data-play='leadjam'>Lead Jammer</div>").droppable(dropActions).appendTo ( $(there) );
-                $("<div class='initialpass dropmehere' data-play='initialpass'>Initial Pass</div>").droppable(dropActions).appendTo( $(there) );
-                $("<div class='calloff dropmehere' data-play='calloff'>Call Off Jam</div>").droppable(dropActions).appendTo( $(there) );
-                $("<div class='points dropmehere' data-play='points'>Points</div>").droppable(dropActions).appendTo( $(there) );
                 $("<div class='penalty dropmehere' data-play='penalty'>Penalty</div>").droppable(dropActions).appendTo( $(there) );
                 $("<div class='starpass dropmehere' data-play='starpass'>Star Pass</div>").droppable(dropActions).appendTo( $(there) );
+                // Lead Jammer or Initial Pass buttons available with bonus call off.
+                if ( !$('#jammer_player').hasClass("leadjammer") && !$('#away_jammer_player').hasClass("leadjammer")) {
+                    if ( !$( this ).hasClass('penalty') ) {
+                        $("<div class='leadjam dropmehere' data-play='leadjam'>Lead Jammer</div>").droppable(dropActions).appendTo ( $(there) );
+                    } else if (!$( this ).hasClass('initialpass')) {
+                        $("<div class='initialpass dropmehere' data-play='initialpass'>Initial Pass</div>").droppable(dropActions).appendTo( $(there) );
+                    }
+                } else if ($( this ).hasClass('leadjammer')) {
+                    $("<div class='calloff dropmehere' data-play='calloff'>Call Off Jam</div>").droppable(dropActions).appendTo( $(there) );
+                } else if (!$( this ).hasClass('initialpass')) {
+                    $("<div class='initialpass dropmehere' data-play='initialpass'>Initial Pass</div>").droppable(dropActions).appendTo( $(there) );
+                };
+                // Points drop available
+                if ( $( this ).hasClass('leadjammer') || $( this ).hasClass('initialpass')) {
+                    $("<div class='points dropmehere' data-play='points'>Points</div>").droppable(dropActions).appendTo( $(there) );
+                }
                 console.log("jammer buttons made");
             };
 
@@ -149,7 +162,7 @@ $(function() {
                     .fail(function() {
                         $('#message').html('Action was not processed').show().fadeOut( 3000 );
                     });
-                $( this ).parent().parent().addClass("leadjammer");
+                $( this ).parent().parent().children('.player').addClass("leadjammer");
             } else if ($( this ).hasClass('calloff')) {
                 // put calloff actions here
                 $.post( '/action', { 
@@ -162,6 +175,32 @@ $(function() {
                     .fail(function() {
                         $('#message').html('Action was not processed').show().fadeOut( 3000 );
                     });
+            } else if ($( this ).hasClass('initialpass')) {
+                // put calloff actions here
+                $.post( '/action', { 
+                    player_id : player_id,
+                    play : play
+                    })
+                    .done(function( result ) {
+                        $('#message').html(result).show().fadeOut( 3000 );
+                    })
+                    .fail(function() {
+                        $('#message').html('Action was not processed').show().fadeOut( 3000 );
+                    });
+                $( this ).parent().parent().children('.player').addClass("initialpass");
+            } else if ($( this ).hasClass('penalty')) {
+                // put calloff actions here
+                $.post( '/action', { 
+                    player_id : player_id,
+                    play : play
+                    })
+                    .done(function( result ) {
+                        $('#message').html(result).show().fadeOut( 3000 );
+                    })
+                    .fail(function() {
+                        $('#message').html('Action was not processed').show().fadeOut( 3000 );
+                    });
+                $( this ).parent().parent().children('.player').addClass("penalty");
             } else if ($( this ).hasClass('points')) {
                 // put points actions here
                 // first, show a dialog to choose number of points 0-5
