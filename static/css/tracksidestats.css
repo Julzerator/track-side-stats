@@ -11,7 +11,12 @@
     margin: 20px;
     position: relative;
     z-index: 60;
-    align-self: center;
+    box-shadow: 10px 5px 5px #DCDCDC;
+}
+
+.col-centered{
+    float: none;
+    margin: 0 auto;
 }
 
 .player {
@@ -66,6 +71,15 @@
     color: red;
     font-size: 20px;
     z-index:200;
+    height: 40px;
+    width: 400px;
+    background-color: white;
+    box-shadow: 10px 5px 5px #DCDCDC;
+    border-style: solid;
+    border-width: 1px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    text-align: center;
 }
 
 .dropmehere {
@@ -77,6 +91,7 @@
     border-radius: 20px;
     border-color: red;
     z-index: 69;
+    box-shadow: 10px 5px 5px #DCDCDC;
 }
 
 .driveout {

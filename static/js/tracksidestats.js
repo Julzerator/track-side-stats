@@ -203,4 +203,5 @@ $('.points_number').on('click', function(){
         .fail(function() {
             $('#message').html('Action was not processed').show().fadeOut( 3000 );
     });
+    $('#points-modal').modal('hide')
 });
