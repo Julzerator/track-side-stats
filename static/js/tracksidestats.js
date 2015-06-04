@@ -72,32 +72,53 @@ window.onload = function() {
     });
 };
 
+// Set the background of things to the team color.
+$(function() {
+    var home_color = $( '#home_team_info').data().color;
+    var away_color = $('#away_team_info').data().color;
+    console.log(home_color);
+    console.log(away_color);
+    $('.home').css('background', home_color);
+    $('.away').css('background', away_color);
+});
+
 // Drag/Drop functionality to send actions.
 $(function() {
     $( ".player" ).draggable({revert:true});
     $( ".player" ).draggable({
         start: function( event, ui ) {
+            $( this ).css('width', '50px');
+            $( this ).css('height', '50px');
             var here = $( this ).parent().attr('id');
             var there = '#' + here + '_actions';
             var there_class = $( there ).parent().attr('class');
-            if (there_class == 'control blocker') {
-                $("<div class='driveout' data-play='driveout'>Drive Out</div>").droppable(dropActions).appendTo( $(there) );
-                $("<div class='knockdown' data-play='knockdown'>Knock Down</div>").droppable(dropActions).appendTo( $(there) );
-                $("<div class='screen' data-play='screen'>Screen</div>").droppable(dropActions).appendTo( $(there) );
-                $("<div class='whip' data-play='whip'>Whip</div>").droppable(dropActions).appendTo( $(there) );
-                $("<div class='blockassist' data-play='blockassist'>Block Assist</div>").droppable(dropActions).appendTo( $(there) );
-                $("<div class='penalty' data-play='penalty'>Penalty</div>").droppable(dropActions).appendTo( $(there) );
-            } else if (there_class == 'control jammer') {
-                $("<div class='leadjam' data-play='leadjam'>Lead Jammer</div>").droppable(dropActions).appendTo ( $(there) );
-                $("<div class='initialpass' data-play='initialpass'>Initial Pass</div>").droppable(dropActions).appendTo( $(there) );
-                $("<div class='calloff' data-play='calloff'>Call Off Jam</div>").droppable(dropActions).appendTo( $(there) );
-                $("<div class='points' data-play='points'>Points</div>").droppable(dropActions).appendTo( $(there) );
-                $("<div class='penalty' data-play='penalty'>Penalty</div>").droppable(dropActions).appendTo( $(there) );
-                $("<div class='starpass' data-play='starpass'>Star Pass</div>").droppable(dropActions).appendTo( $(there) );
+            if (there_class == 'control home blocker') {
+                $("<div class='driveout dropmehere' data-play='driveout'>Drive Out</div>").droppable(dropActions).appendTo( $(there) );
+                $("<div class='knockdown dropmehere' data-play='knockdown'>Knock Down</div>").droppable(dropActions).appendTo( $(there) );
+                $("<div class='screen dropmehere' data-play='screen'>Screen</div>").droppable(dropActions).appendTo( $(there) );
+                $("<div class='whip dropmehere' data-play='whip'>Whip</div>").droppable(dropActions).appendTo( $(there) );
+                $("<div class='blockassist dropmehere' data-play='blockassist'>Block Assist</div>").droppable(dropActions).appendTo( $(there) );
+                $("<div class='penalty dropmehere' data-play='penalty'>Penalty</div>").droppable(dropActions).appendTo( $(there) );
+                console.log("blocker buttons made");
+            } else if (there_class == 'control home jammer' || there_class == 'control away jammer') {
+                $("<div class='leadjam dropmehere' data-play='leadjam'>Lead Jammer</div>").droppable(dropActions).appendTo ( $(there) );
+                $("<div class='initialpass dropmehere' data-play='initialpass'>Initial Pass</div>").droppable(dropActions).appendTo( $(there) );
+                $("<div class='calloff dropmehere' data-play='calloff'>Call Off Jam</div>").droppable(dropActions).appendTo( $(there) );
+                $("<div class='points dropmehere' data-play='points'>Points</div>").droppable(dropActions).appendTo( $(there) );
+                $("<div class='penalty dropmehere' data-play='penalty'>Penalty</div>").droppable(dropActions).appendTo( $(there) );
+                $("<div class='starpass dropmehere' data-play='starpass'>Star Pass</div>").droppable(dropActions).appendTo( $(there) );
+                console.log("jammer buttons made");
             };
 
         }
     });
+    $( ".player" ).draggable({
+        stop: function( event, ui ) {
+            $( this ).css('width', '100px');
+            $( this ).css('height', '100px');
+            $( '.actions' ).empty();
+        }
+    })
     var dropActions = {
         drop: function( event, ui ) {
             var player_id = $( this ).parent().parent().data().playerid;
@@ -144,21 +165,10 @@ $(function() {
             } else if ($( this ).hasClass('points')) {
                 // put points actions here
                 // first, show a dialog to choose number of points 0-5
-
-                // var points = 
-                var jammer_type = $( this ).parent().parent().attr('id')
-                $.post( '/action', { 
-                    player_id : player_id,
-                    play : play,
-                    points : points,
-                    jammer_type : jammer_type
-                    })
-                    .done(function( result ) {
-                        $('#message').html(result).show().fadeOut( 3000 );
-                    })
-                    .fail(function() {
-                        $('#message').html('Action was not processed').show().fadeOut( 3000 );
-                    });
+                $( '#points_jammer' ).attr('value', player_id);
+                $( '#points-modal' ).modal({
+                    keyboard: false
+                });
             } else {
                 $.post( '/action', { 
                     player_id : player_id,
@@ -175,3 +185,22 @@ $(function() {
         } 
     };
   });
+
+// Points recording and submission
+$('.points_number').on('click', function(){
+    var points = $( this ).text();
+    var player_id = $( '#points_jammer' ).attr('value');
+    console.log('points - ' + points);
+    console.log('player id - ' + player_id);
+    $.post( '/action', { 
+        player_id : player_id,
+        play : 'points',
+        points : points
+        })
+        .done(function( result ) {
+            $('#message').html(result).show().fadeOut( 3000 );
+        })
+        .fail(function() {
+            $('#message').html('Action was not processed').show().fadeOut( 3000 );
+    });
+});

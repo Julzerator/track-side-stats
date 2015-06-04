@@ -3,15 +3,22 @@
 <div class='container'>
 
     <div class='row'>
-        <div name='timer'>
-            <p id='clockface'>00:00.000</p>
+        <div class='col-md-5 home'>
+            <h2 id='home_team_info' data-color="{{ session['home_team']['color'] }}">{{ session['home_team']['team_name'] }}</h2>
+        </div>
+        <div class='col-md-2 center'>
+            <div class='timer' name='timer'>
+                <p id='clockface'>00:00.000</p>
+            </div>
+            <div class='timer' name='timer'>
+                <p id='jamtimer' hidden>00:30</p>
+            </div>
+        </div>
+        <div class='col-md-5 away'>
+            <h2 id='away_team_info' data-color="{{ session['away_team']['color'] }}">{{ session['away_team']['team_name'] }}</h2>
         </div>
     </div>
-    <div class='row'>
-        <div name='timer'>
-            <p id='jamtimer'>00:30</p>
-        </div>
-    </div>
+
     <div class='row'>
         <div id='message'></div>
     </div>
@@ -30,53 +37,79 @@
     </div>
 
     <div class='row'>
-        <div id='pivot' class='control blocker' data-playerid='{{pivot.player_id}}'>
-            <div id='pivot_player' class='player'>
-                Pivot<br>
-                {{ pivot.name }} ({{ pivot.number }})
+        <div class='col-md-4'>
+            <div id='pivot' class='control home blocker' data-playerid='{{pivot.player_id}}'>
+                <div id='pivot_player' class='player'>
+                    <span class='position'>Pivot</span><br>
+                    <span class='player_number'>{{ pivot.number }}</span><br>
+                    <span class='player_name'>{{ pivot.name }}</span>
+                </div>
+                <div id='pivot_actions' class='actions'></div>
             </div>
-            <div id='pivot_actions' class='actions'></div>
         </div>
-        <div id='blocker1' class='control blocker' data-playerid='{{blocker1.player_id}}'>
-            <div id='blocker1_player' class='player'>
-                Blocker<br>
-                {{ blocker1.name }} ({{ blocker1.number }})
+        <div class='col-md-4'>
+            <div id='blocker1' class='control home blocker' data-playerid='{{blocker1.player_id}}'>
+                <div id='blocker1_player' class='player'>
+                    <span class='position'>Blocker</span><br>
+                    <span class='player_number'>{{ blocker1.number }}</span><br>
+                    <span class='player_name'>{{ blocker1.name }}</span>
+                </div>
+                <div id='blocker1_actions' class='actions'></div>
             </div>
-            <div id='blocker1_actions' class='actions'></div>
         </div>
-        <div id='blocker2' class='control blocker' data-playerid='{{blocker2.player_id}}'>
-            <div id='blocker2_player' class='player'>
-                Blocker<br>
-                {{ blocker2.name }} ({{ blocker2.number }})
+        <div class='col-md-4'>
+            <div id='jammer' class='control home jammer' data-playerid='{{jammer.player_id}}'>
+                <div id='jammer_player' class='player'>
+                    <span class='position'>Jammer</span><br>
+                    <span class='player_number'>{{ jammer.number }}</span><br>
+                    <span class='player_name'>{{ jammer.name }}</span>
+                </div>
+                <div id='jammer_actions' class='actions'></div>
             </div>
-            <div id='blocker2_actions' class='actions'></div>
         </div>
-        <div id='blocker3' class='control blocker' data-playerid='{{blocker3.player_id}}'>
-            <div id='blocker3_player' class='player'>
-                Blocker<br>
-                {{ blocker3.name }} ({{ blocker3.number }})
+        <div class='col-md-4'>
+            <div id='blocker2' class='control home blocker' data-playerid='{{blocker2.player_id}}'>
+                <div id='blocker2_player' class='player'>
+                    <span class='position'>Blocker</span><br>
+                    <span class='player_number'>{{ blocker2.number }}</span><br>
+                    <span class='player_name'>{{ blocker2.name }}</span>
+                </div>
+                <div id='blocker2_actions' class='actions'></div>
             </div>
-            <div id='blocker3_actions' class='actions'></div>
         </div>
-        <div id='jammer' class='control jammer' data-playerid='{{jammer.player_id}}'>
-            <div id='jammer_player' class='player'>
-                Jammer<br>
-                {{ jammer.name }} ({{ jammer.number }})
+        <div class='col-md-4'>
+            <div id='blocker3' class='control home blocker' data-playerid='{{blocker3.player_id}}'>
+                <div id='blocker3_player' class='player'>
+                    <span class='position'>Blocker</span><br>
+                    <span class='player_number'>{{ blocker3.number }}</span><br>
+                    <span class='player_name'>{{ blocker3.name }}</span>
+                </div>
+                <div id='blocker3_actions' class='actions'></div>
             </div>
-            <div id='jammer_actions' class='actions'></div>
         </div>
-        <div id='away_jammer' class='control jammer' data-playerid='{{away_jammer.player_id}}'>
-            <div id='away_jammer_player' class='player'>
-                Opposing Jammer<br>
-                {{ away_jammer.name }} ({{ away_jammer.number }})
+        <div class='col-md-4'>
+            <div id='away_jammer' class='control away jammer' data-playerid='{{away_jammer.player_id}}'>
+                <div id='away_jammer_player' class='player'>
+                    <span class='position'>Opposing Jammer</h3>
+                    <span class='player_number'>{{ away_jammer.number }}</span><br>
+                    <span class='player_name'>{{ away_jammer.name }}</span>
+                </div>
+                <div id='away_jammer_actions' class='actions'></div>
             </div>
-            <div id='away_jammer_actions' class='actions'></div>
         </div>
     </div>
 </div>
-
-<script>
-
-
-</script>
+<div class="modal fade points-modal" id="points-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <button class='points_number' value='0'>0</button>
+            <button class='points_number' value='1'>1</button>
+            <button class='points_number' value='2'>2</button>
+            <button class='points_number' value='3'>3</button>
+            <button class='points_number' value='4'>4</button>
+            <button class='points_number' value='5'>5</button>
+            <input type='hidden' id='points_jammer' value=''></input>
+        </div>
+    </div>
+</div>
 {% endblock %}

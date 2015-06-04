@@ -402,7 +402,8 @@ def new_game():
         session['home_team'] = {
                                 'team_id' : home_team_id,
                                 'team_name' : hometeam.name,
-                                'roster_id' : home.roster_id
+                                'roster_id' : home.roster_id,
+                                'color' : home_color
         }
 
         # Create Away Roster:
@@ -414,7 +415,8 @@ def new_game():
         session['away_team'] = {
                                 'team_id' : away_team_id,
                                 'team_name' : awayteam.name,
-                                'roster_id' : away.roster_id
+                                'roster_id' : away.roster_id,
+                                'color' : away_color
         }
 
         flash("Game Created!")
@@ -852,7 +854,9 @@ def record_action():
         return message
 
     elif play == 'points':
-        points = request.form['points']
+        print "*" * 80
+        print "I made it here"
+        points = int(request.form['points'])
         action = Action(jam_id=jam_id,
                     player_id=player_id,
                     play=play,
