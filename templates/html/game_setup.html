@@ -1,60 +1,56 @@
 {% extends 'html/web_base.html' %}
 {% block content %}
-
-Debug game_id: {{ session.game.game_id }}
-	<div name='game_info'>
+<div class='container'>
+	<div class='row'>
+		{% if session.game.event_name %}
 		<h1>{{ session.game.event_name }}</h1>
-		<p name='game_info_details'>
-			Date: {{ session.game.date }}<br>
-			Location: {{ session.game.location }}<br>
-			<span name='game_info_gametype'>{{ session.game.g_type }}</span>
-			<span name='game_info_floortype'>{{ session.game.floor }}</span>
-		</p>
+		{% endif %}
 	</div>
-	
-	<div name='home_roster'>
-		<h2>{{ session.home_team.team_name }}</h2>
-		<ul>
-		{% for number, name, player_id, rospla_id, roster_id in home %}
-			<li>{{ number }} - {{ name }} <button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button></li>
-		{% endfor %}
-		</ul>
+	<div class='row setup_player'>
+		<div class='col-md-2'>
+			<label>Date:</label> {{ session.game.date }}
+		</div>
+		<div class='col-md-4'>
+			<label>Location:</label> {{ session.game.location }}
+		</div>
+		<div class='col-md-2'>
+			<label>Game Type:</label> {{ session.game.g_type }}
+		</div>
+		<div class='col-md-2'>
+			<label>Floor Type:</label> {{ session.game.floor }}
+		</div>
+		<div class='col-md-1 col-md-offset-1'>
+			<a href="/player_assignment" class="btn btn-success" id='start_game'>Start Game</a>
+		</div>
 	</div>
-
-	<div name='away_roster'>
-		<h2>{{ session.away_team.team_name }}</h2>
-		<ul>
-		{% for number, name, player_id, rospla_id, roster_id in away %}
-			<li>{{ number }} - {{ name }} <button class='removeplayer' data-rosplaid='{{rospla_id}}'>Remove</button></li>
-		{% endfor %}
-		</ul>
+	<div class='row'>
+		<div class='col-md-5 col-md-offset-1'>
+			<h2>{{ session.home_team.team_name }}</h2>
+			<div class='setup'>
+				<ul>
+					{% for number, name, player_id, rospla_id, roster_id in home %}
+					<li class='setup_row'>
+						<p class='col-md-8 setup_player'>{{ name }} ({{ number }})</p>
+						<button class='removeplayer btn btn-danger col-md-4 setup_remove' data-rosplaid='{{rospla_id}}'>Remove</button>
+					</li>
+				{% endfor %}
+				</ul>
+			</div>
+		</div>
+		<div class='col-md-5'>
+			<h2>{{ session.away_team.team_name }}</h2>
+			<div class='setup'>
+				<ul>
+					{% for number, name, player_id, rospla_id, roster_id in away %}
+					<li class='setup_row'>
+						<p class='col-md-8 setup_player'>{{ name }} ({{ number }})</p>
+						<button class='removeplayer btn btn-danger col-md-4 setup_remove' data-rosplaid='{{rospla_id}}'>Remove</button>
+					</li>
+				{% endfor %}
+				</ul>
+			</div>
+		</div>
 	</div>
+</div>
 
-	<a href='/player_assignment'><button name='player_assignment'>Start</button></a>
-
-<script>
-	$('.removeplayer').on('click', removePlayer);
-
-	function removePlayer(evt) {
-		var rospla_id = this.dataset.rosplaid;
-		console.log(this.parentNode);
-		this.parentNode.remove();
-		$.post( "/change_roster/remove/" + rospla_id );
-		alert('Player removed.');
-		console.log(this.dataset.rosplaid);
-	};
-
-	$('.addplayer').on('click', addPlayer);
-
-	function addPlayer(evt) {
-		alert('I clicked you to add! Woot!');
-	};
-
-	$('.searchplayer').on('click', searchPlayer);
-
-	function searchPlayer(evt) {
-		alert('I want to search for the right player!');
-	}
-
-</script>
 {% endblock %}

@@ -3,51 +3,99 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>hjkh</title>
-		<link href="static/bootstrap-3.3.4-dist/css/bootstrap.min.css" rel="stylesheet">
-		<link rel="stylesheet" href="static/css/tracksidestats.css">
-		<script src="static/js/jquery-2.1.4.min.js"></script>
+		<title>Track Side Stats</title>
+		<link href="../static/bootstrap-3.3.4-dist/css/bootstrap.cyborg.css" rel="stylesheet">
+		<link rel="stylesheet" href="../static/js/jquery-ui.min.css">
+		<link rel="stylesheet" href="../static/css/tracksidestats.css">
+		<script src="../static/js/jquery-2.1.4.min.js"></script>
+		<link href='http://fonts.googleapis.com/css?family=News+Cycle:400,700|Covered+By+Your+Grace' rel='stylesheet' type='text/css'>
+		<link rel="icon" type="image/ico" href="../static/img/favicon/favicon.ico">
 	</head>
+
 	<body>
-		<nav class="navbar navbar-default navbar-static-top navbar-inverse">
-	      <div class="container-fluid">
-	        <!-- Brand and toggle get grouped for better mobile display -->
-	        <div class="navbar-header">
-	          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-	            <span class="sr-only">Toggle navigation</span>
-	            <span class="icon-bar"></span>
-	            <span class="icon-bar"></span>
-	            <span class="icon-bar"></span>
-	          </button>
-	          <a class="navbar-brand" href="/">Home</a>
-	        </div>
+		<div id='wrap'>
+			<nav class="navbar navbar-default navbar-static-top navbar-inverse">
+		    	<div class="container-fluid">
+			        <!-- Brand and toggle get grouped for better mobile display -->
+			        <div class="navbar-header">
+			        	<a class="navbar-brand" href="/">
+			        		<img alt="Home" src="../static/img/TSS_logo_black_on_white_sm.png" id='TSS_logo_sm'>
+			        	</a>
+			        </div>
 
-	        <!-- Collect the nav links, forms, and other content for toggling -->
-	        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-	          <ul class="nav navbar-nav">
-	            <li class="active"><a href="/league">Leagues<span class="sr-only">(current)</span></a></li>
-	            <li><a href="/team">Teams</a></li>
-	          </ul>
+			        <!-- Collect the nav links, forms, and other content for toggling -->
+			        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			          <ul class="nav navbar-nav">
+			          	<li class="dropdown">
+				        	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Leagues<span class="caret"></span></a>
+				        	<ul class="dropdown-menu" role="menu">
+					            <li><a href="/leagues">List of Leagues</a></li>
+					            <li class="divider"></li>
+					            <li><a href="/new_league">Add New League</a></li>
+				        	</ul>
+				        </li>
+				        <li class="dropdown">
+				        	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Teams<span class="caret"></span></a>
+				        	<ul class="dropdown-menu" role="menu">
+					            <li><a href="/teams">List of Teams</a></li>
+					            <li class="divider"></li>
+					            <li><a href="/new_team">Add New Team</a></li>
+				        	</ul>
+				        </li>
+				        <li class="dropdown">
+				        	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Players<span class="caret"></span></a>
+				        	<ul class="dropdown-menu" role="menu">
+					            <li><a href="/players">List of Players</a></li>
+					            <li class="divider"></li>
+					            <li><a href="/new_player">Add New Player</a></li>
+				        	</ul>
+				        </li>
+				        <li class="dropdown">
+				        	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Games<span class="caret"></span></a>
+				        	<ul class="dropdown-menu" role="menu">
+					            <li><a href="/games">List of Games</a></li>
+					            <li class="divider"></li>
+					            <li><a href="/new_game">Create New Game</a></li>
+				        	</ul>
+				        </li>
+			            {% if not session %}
+			            {% else %}
+				            {% if session.game == 'new' %}
+				            {% else %}
+							<li><a href="/player_assignment">Current Game: {{ session.home_team.team_name }} Vs. {{ session.away_team.team_name }}</a></li>
+							{% endif %}
+						{% endif %}
+			          </ul>
 
-	          <ul class="nav navbar-nav navbar-right">
-	            <li><a href="/to_login">Login</a></li>
-	            <li><a href="/logout">Log out</a></li>
-	            <li><a href="/to_signup">Sign Up</a></li>
-	          </ul>
-	        </div><!-- /.navbar-collapse -->
-	      </div><!-- /.container-fluid -->
-	    </nav>
-		    <ul>
-				{% for message in get_flashed_messages() %}
-					<li>{{ message }}</li>
-				{% endfor %}
-			</ul>
-		{% block content %}
+			          <ul class="nav navbar-nav navbar-right">
+			          	<li><a href="/">Hello, Rules Verne!</a></li>
+			            <!-- <li><a href="/">Login</a></li> -->
+			            <li><a href="/clear_session">Log out</a></li>
+			            <!-- <li><a href="/">Sign Up</a></li> -->
+			          </ul>
+			        </div><!-- /.navbar-collapse -->
+		    	</div><!-- /.container-fluid -->
+		    </nav>
+		    <div class='message'>
+			    <ul>
+					{% for message in get_flashed_messages() %}
+						<li>{{ message }}</li>
+					{% endfor %}
+				</ul>
+			</div>
 
-		{% endblock %}
+			<div id='main_content'>
+				{% block content %}
 
-		<div>Contact info will go here?</div>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-	<script src='static/js/tracksidestats.js'></script>
+				{% endblock %}
+			</div>
+
+			<div id='footer'>
+				Site built by Julie Haehn for Hackbright Cohort X. For more information, <a href="mailto:jhaehn@gmail.com?subject=Questions%20About%20TrackSideStats&body=%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%0D%0A%0D%0ASent%20from%20TrackSideStats.com.">contact me</a>!
+			</div>
+		<script src="../static/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+		<script src='../static/js/tracksidestats.js'></script>
+		<script src='../static/js/columnizer/jquery.columnizer.js'></script>
+		</div>
 	</body>
 </html>

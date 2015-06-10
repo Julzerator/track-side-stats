@@ -1,24 +1,36 @@
 {% extends 'html/web_base.html' %}
 {% block content %}
+<div class='container'>
+  <div class='row'>
+    <div class='col-md-8 col-md-offset-2'>
+      <h2>Team Details</h2>
 
-    <h2>Team Details</h2>
-
-    <div name="team_details">
-      Name: {{ team.name }} <br>
-      Team Type: {{ team.t_type }} <br>
-      Founded: {{ team.founded }} <br>
-      Disbanded: {{ team.disbanded }} <br>
-    </div>
-    <div name="team_players">
-    <ul>
-      {% for player in team_players %}
+      <div name="team_details">
+        Name: {{ team.name }} <br>
+        Team Type: {{ team.t_type }} <br>
+        Founded: {{ team.founded }} <br>
+        Disbanded: {{ team.disbanded }} <br>
+      </div>
+      <div name="team_players">
+      <ul>
+        {% for player in team_players %}
+          <li>
+              <a href="/player_details/{{ player.player_id }}">
+                {{ player.number }} -- {{ player.name }}
+              </a>
+          </li>
+        {% endfor %}
+      </ul>
+      <ul>
+        {% for date, location, event, g_type, floor, roster_id, game_id, opponent in games %}
         <li>
-            <a href="/player_details/{{ player.player_id }}">
-              {{ player.number }} -- {{ player.name }}
-            </a>
+          {{ date }} in {{ location }} vs {{ opponent[0] }}
         </li>
-      {% endfor %}
-    </ul>
+        {% endfor %}
+      </ul>
+      </div>
     </div>
+  </div>
+</div>
 
 {% endblock %}

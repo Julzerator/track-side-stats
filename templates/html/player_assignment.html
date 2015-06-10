@@ -6,34 +6,34 @@
 		<div class='col-md-4'>
 			<!-- Show current jam stored in session -->
 			<div id='current_jam'>
-				Jam: {{ session.jam_num }}
+				<h2>Jam: {{ session.jam_num }}</h2>
 			</div>
 		</div>
 
 		<div class='col-md-4'>
 			<!-- Show current period stored in session -->
 			<div id='current_period'>
-				Period: {{ session.period_num }}
+				<h2>Period: {{ session.period_num }}</h2>
 			</div>
 		</div>
 		<div class='col-md-2'>
-			{% if session.jam_num > 1 %}
-			{% include "html/between_jams.html" %}
+			{% if session.jam_num != 1 %}
+			<h2>{% include "html/between_jams.html" %}</h2>
 			{% endif %}
 		</div>
 		<div class='col-md-2'>
-			<input type='submit' value='Start Jam'>
+			<input class='btn btn-success' id='start_jam' type='submit' value='Start Jam'>
 		</div>
 	</div>
 	<div class='row'>
 		<div class='col-md-3'>
-			<h3>Team name: {{ session.home_team.team_name }}</h3>
+			<h3>{{ session.home_team.team_name }}</h3>
 		</div>
 		<div class='col-md-3'>
 			<h3>Assign positions:</h3>
 		</div>
 		<div class='col-md-3'>
-			<h3>Team name: {{ session.away_team.team_name }}</h3>
+			<h3>{{ session.away_team.team_name }}</h3>
 		</div>
 		<div class='col-md-3'>
 			<h3>Assign positions:</h3>
@@ -48,7 +48,7 @@
 					{% for number, name, player_id, rospla_id, roster_id in home %}
 					<li>
 						<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}'  class='home_player'>
-								<p class='roster'>{{ name }} ({{ number }})</p>
+								<p class='roster_player'>{{ name }} ({{ number }})</p>
 						</div>
 					</li>
 					{% endfor %}
@@ -93,7 +93,7 @@
 					{% for number, name, player_id, rospla_id, roster_id in away %}
 					<li>
 						<div data-playerid='{{player_id}}' data-name='{{ name }}' data-number='{{ number }}' class='away_player'>
-							<p class='roster'>{{ name }} ({{ number }})</p>
+							<p class='roster_player'>{{ name }} ({{ number }})</p>
 						</div>
 					</li>
 					{% endfor %}
@@ -120,7 +120,13 @@
 		</form>
 	</div>
 </div>
-
+<div class="modal fade" id="start_jam_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <button id="start_jam_button" value='startjam'>Start Jam</button>
+        </div>
+    </div>
+</div>
 
 
 

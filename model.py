@@ -183,8 +183,6 @@ class Game(db.Model):
     event_name = db.Column(db.String(100), nullable=True)
     g_type = db.Column(db.String(100), nullable=False)
     floor = db.Column(db.String(100), nullable=False)
-    # home_score = db.Column(db.Integer, default=0)
-    # away_score = db.Column(db.Integer, default=0)
     
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -235,8 +233,8 @@ class JamPosition(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<JamPosition id=%s player_name=%s position=%s jam_info=%s>" % (
-            self.jampos_id, players.name, self.position, self.jam_id)
+        return "<JamPosition id=%s position=%s jam_info=%s>" % (
+            self.jampos_id, self.position, self.jam_id)
 
 
 class Action(db.Model):

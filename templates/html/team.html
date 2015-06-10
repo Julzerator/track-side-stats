@@ -1,22 +1,48 @@
 {% extends 'html/web_base.html' %}
 {% block content %}
 
-<h1>Create New Team</h1>
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-8 col-md-offset-2'>
+			<form action="/new_team" method="POST" class='form-horizontal'>
+				<fieldset>
+					<legend>Create New Team</legend>
+					<div class='form-group'>
+						<label for='name_input' class='col-md-2 control-label'>Name:</label>
+						<div class='col-md-10'>
+							<input type='text' id='name_input' placeholder='Team Name' class='form-control' required>
+						</div>
+					</div>
+					<div class="form-group">
+    					<label for="t_type_input" class="col-lg-2 control-label">Team Type:</label>
+    					<div class="col-lg-10">
+    						<select class="form-control" id="t_type_input" name='t_type_input'>
+    							<option value='Travel'>Travel Team</option>
+								<option value='B Team'>B Team</option>
+								<option value='Home'>Home Team</option>
+								<option value='Rec'>Recreational</option>
+								<option value='None' selected></option>
+							</select>
+					    </div>
+				    </div>
+					<div class='form-group'>
+						<label for='founded_input' class='col-md-2 control-label'>Founded:</label>
+						<div class='col-md-10'>
+							<input type='date' id='founded_input' class='form-control' required>
+						</div>
+					</div>
+					<div class="form-group">
+    					<div class="col-lg-10 col-lg-offset-2">
+    						<button type="submit" class="btn btn-primary">Add New Team</button>
+    					</div>
+    				</div>
+    			</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+<h1></h1>
 
-<form action="/new_league" method="POST">
-	Name: <input type='text' name='name_input' required> 
-	Team Type: 
-		<select name='t_type_input'>
-			<option value='Travel'>Travel Team</option>
-			<option value='B Team'>B Team</option>
-			<option value='Home'>Home Team</option>
-			<option value='Rec'>Recreational</option>
-			<option value='None' selected></option>
-		</select><br>
-	Founded: <input type='date' name='founded_input' required><br>
-		<br>
-	<input type='submit' value='Add New Team'>
-</form>
 
 
 {% endblock %}

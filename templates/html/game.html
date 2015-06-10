@@ -2,102 +2,184 @@
 {% block content %}
 
 {% if session.game == 'new' %}
-	<h1>Create New Game</h1>
-
-	<form action="/new_game" method="POST">
-		Home Team: 
-			<select name='home_team' required>
-				<option value='' disabled selected>Select Home Team</option>
-				{% for team in teams %}
-				<option value='{{ team.team_id }}'>{{ team.name }}</option>
-				{% endfor %}
-			</select>
-			Color: 
-				<select name='home_color_input' required>
-					<option value='' disabled selected>Select Color</option>
-					<option value='aqua'>Aqua</option>
-					<option value='black'>Black</option>
-					<option value='blue'>Blue</option>
-					<option value='fuchsia'>Fuchsia</option>
-					<option value='gray'>Gray</option>
-					<option value='green'>Green</option>
-					<option value='lime'>Lime</option>
-					<option value='maroon'>Maroon</option>
-					<option value='navy'>Navy</option>
-					<option value='olive'>Olive</option>
-					<option value='orange'>Orange</option>
-					<option value='purple'>Purple</option>
-					<option value='red'>Red</option>
-					<option value='silver'>Silver</option>
-					<option value='teal'>Teal</option>
-					<option value='white'>White</option>
-					<option value='yellow'>Yellow</option>
-				</select><br>
-		Visiting Team: 
-			<select name='away_team' title='Select Away Team' required>
-				<option value='' disabled selected>Select Away Team</option>
-				{% for team in teams %}
-				<option value='{{ team.team_id }}'>{{ team.name }}</option>
-				{% endfor %}
-			</select>
-			Color: 
-				<select name='away_color_input' required>
-					<option value='' disabled selected>Select Color</option>
-					<option value='aqua'>Aqua</option>
-					<option value='black'>Black</option>
-					<option value='blue'>Blue</option>
-					<option value='fuchsia'>Fuchsia</option>
-					<option value='gray'>Gray</option>
-					<option value='green'>Green</option>
-					<option value='lime'>Lime</option>
-					<option value='maroon'>Maroon</option>
-					<option value='navy'>Navy</option>
-					<option value='olive'>Olive</option>
-					<option value='orange'>Orange</option>
-					<option value='purple'>Purple</option>
-					<option value='red'>Red</option>
-					<option value='silver'>Silver</option>
-					<option value='teal'>Teal</option>
-					<option value='white'>White</option>
-					<option value='yellow'>Yellow</option>
-				</select><br>
-		Date of game: <input type='date' name='date_input' required><br>
-		Event Name: <input type='text' name='event_input'><br>
-		Location: <input type='text' name='location_input' required><br>
-		Game Type: 
-			<select name='g_type_input'>
-				<option value='' disabled selected>Select Game Type</option>
-				<option value='A team'>A team</option>
-				<option value='B team'>B team</option>
-				<option value='home team'>home team</option>
-				<option value='rec league'>rec league</option>
-				<option value='scrimmage'>scrimmage</option>
-			</select><br>
-		Floor Type: 
-			<select name='floor_input'>
-				<option value='' disabled selected>Select Floor Type</option>
-				<option value='wood'>wood</option>
-				<option value='sport court'>sport court</option>
-				<option value='concrete'>concrete</option>
-				<option value='polished concrete'>polished concrete</option>
-				<option value='outdoors concrete'>outdoors concrete</option>
-			</select><br>
-			<br>
-		<input type='submit' value='Create Game'>
-	</form>
-{% else %}
-	<h1>Current Game: </h1>
-	Debug game_id: {{ session.game.game_id }}
-	<div name='game_info'>
-		<h2>{{ session.game.event_name }}</h2>
-		<p name='game_info_details'>
-			Date: {{ session.game.date }}<br>
-			Location: {{ session.game.location }}<br>
-			<span name='game_info_gametype'>{{ session.game.g_type }}</span>
-			<span name='game_info_floortype'>{{ session.game.floor }}</span>
-		</p>
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-8 col-md-offset-2'>
+			<form action="/new_game" method="POST" class='form-horizontal'>
+				<fieldset>
+					<legend>Create New Game</legend>
+					<div class='form-group'>
+						<label for='home_team' class='col-md-2 control-label'>Home Team:</label>
+						<div class='col-md-6'>
+							<select class="form-control" id="home_team" name='home_team' required>
+								<option value='' disabled selected>Select Home Team</option>
+								{% for team in teams %}
+								<option value='{{ team.team_id }}'>{{ team.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<label for='home_color_input' class='col-md-1 control-label'>Color:</label>
+						<div class='col-md-3'>
+							<select class="form-control" id="home_color_input" name='home_color_input' required>
+								<option value='' disabled selected>Select Color</option>
+								<option value='aqua'>Aqua</option>
+								<option value='black'>Black</option>
+								<option value='blue'>Blue</option>
+								<option value='fuchsia'>Fuchsia</option>
+								<option value='gray'>Gray</option>
+								<option value='green'>Green</option>
+								<option value='lime'>Lime</option>
+								<option value='maroon'>Maroon</option>
+								<option value='navy'>Navy</option>
+								<option value='olive'>Olive</option>
+								<option value='orange'>Orange</option>
+								<option value='purple'>Purple</option>
+								<option value='red'>Red</option>
+								<option value='silver'>Silver</option>
+								<option value='teal'>Teal</option>
+								<option value='white'>White</option>
+								<option value='yellow'>Yellow</option>
+							</select>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label for='away_team' class='col-md-2 control-label'>Opposing Team:</label>
+						<div class='col-md-6'>
+							<select class="form-control" id="away_team" name='away_team' required>
+								<option value='' disabled selected>Select Home Team</option>
+								{% for team in teams %}
+								<option value='{{ team.team_id }}'>{{ team.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<label for='away_color_input' class='col-md-1 control-label'>Color:</label>
+						<div class='col-md-3'>
+							<select class="form-control" id="away_color_input" name='away_color_input' required>
+								<option value='' disabled selected>Select Color</option>
+								<option value='aqua'>Aqua</option>
+								<option value='black'>Black</option>
+								<option value='blue'>Blue</option>
+								<option value='fuchsia'>Fuchsia</option>
+								<option value='gray'>Gray</option>
+								<option value='green'>Green</option>
+								<option value='lime'>Lime</option>
+								<option value='maroon'>Maroon</option>
+								<option value='navy'>Navy</option>
+								<option value='olive'>Olive</option>
+								<option value='orange'>Orange</option>
+								<option value='purple'>Purple</option>
+								<option value='red'>Red</option>
+								<option value='silver'>Silver</option>
+								<option value='teal'>Teal</option>
+								<option value='white'>White</option>
+								<option value='yellow'>Yellow</option>
+							</select>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label for='date_input' class='col-md-2 control-label'>Date of game:</label>
+						<div class='col-md-3'>
+							<input type='date' id='date_input' name='date_input' class='form-control' required>
+						</div>
+						<label for='location_input' class='col-md-1 control-label'>Location:</label>
+						<div class='col-md-6'>
+							<input type='text' id='location_input' name='location_input' class='form-control' placeholder='Rink or City' required>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label for='event_input' class='col-md-2 control-label'>Event Name:</label>
+						<div class='col-md-10'>
+							<input type='text' id='event_input' name='event_input' placeholder='e.g. Championships' class='form-control'>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label for='g_type_input' class='col-md-2 control-label'>Game Type:</label>
+						<div class='col-md-4'>
+							<select class="form-control" id="g_type_input" name='g_type_input' required>
+								<option value='' disabled selected>Select Game Type</option>
+								<option value='A team'>A team</option>
+								<option value='B team'>B team</option>
+								<option value='home team'>home team</option>
+								<option value='rec league'>rec league</option>
+								<option value='scrimmage'>scrimmage</option>
+							</select>
+						</div>
+						<label for='floor_input' class='col-md-2 control-label'>Floor Type:</label>
+						<div class='col-md-4'>
+							<select class="form-control" id="floor_input" name='floor_input' required>
+								<option value='' disabled selected>Select Floor Type</option>
+								<option value='wood'>wood</option>
+								<option value='sport court'>sport court</option>
+								<option value='concrete'>concrete</option>
+								<option value='polished concrete'>polished concrete</option>
+								<option value='outdoors concrete'>outdoors concrete</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+    					<div class="col-lg-10 col-lg-offset-2">
+    						<button type="submit" class="btn btn-primary">Create Game</button>
+    					</div>
+    				</div>
+    			</fieldset>
+			</form>
+		</div>
 	</div>
-	
+</div>
+
+{% else %}
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-6 col-md-offset-3'>
+			<div class="panel panel-danger" id='game_in_prog_warning'>
+				<div class="panel-heading">
+					<h3 class="panel-title">Game Already In Progress</h3>
+				</div>
+				<div class="panel-body">
+					<div name='game_info'>
+						<div class='container'>
+							<div class='row'>
+								{% if session.game.event_name %}
+									<h2>{{ session.game.event_name }}</h2>
+								{% endif %}
+							</div>
+							<div class='row'>
+								<label class='col-md-2 control-label'>Current Game:</label>
+								<p class='col-md-8'>
+									{{ session.home_team.team_name }} Vs. {{ session.away_team.team_name }}
+								</p>
+							</div>
+							<div class='row'>
+								<label class='col-md-2 control-label'>Date:</label>
+								<p class='col-md-8'>
+									{{ session.game.date }}
+								</p>
+							</div>
+							<div class='row'>
+								<label class='col-md-2 control-label'>Location:</label>
+								<p class='col-md-8'>
+									{{ session.game.location }}
+								</p>
+							</div>
+							<div class='row'>
+								<label class='col-md-2 control-label'>Game Type:</label>
+								<p class='col-md-8'>
+									{{ session.game.g_type }}
+								</p>
+							</div>
+							<div class='row'>
+								<label class='col-md-2 control-label'>Floor Type:</label>
+								<p class='col-md-8'>
+									{{ session.game.floor }}
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
 {% endif %}
 

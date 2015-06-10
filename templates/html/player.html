@@ -1,0 +1,61 @@
+{% extends 'html/web_base.html' %}
+{% block content %}
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-8 col-md-offset-2'>
+			<form action="/new_player" method="POST" class='form-horizontal'>
+				<fieldset>
+					<legend>Add New Player</legend>
+					<div class='form-group'>
+						<label for='name_input' class='col-md-2 control-label'>Derby Name:</label>
+						<div class='col-md-10'>
+							<input type='text' id='name_input' placeholder='Derby Name' class='form-control' required>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label for='fname_input' class='col-md-2 control-label'>Legal Name:</label>
+						<div class='col-md-5'>
+							<input type='text' id='fname_input' placeholder='First Name' class='form-control'>
+						</div>
+						<div class='col-md-5'>
+							<input type='text' id='lname_input' placeholder='Last Name' class='form-control'>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label for='number_input' class='col-md-2 control-label'>Number:</label>
+						<div class='col-md-10'>
+							<input type='text' id='number_input' placeholder='Number' class='form-control' required>
+						</div>
+					</div>
+					<div class="form-group">
+    					<label for="team_id_input" class="col-lg-2 control-label">Team:</label>
+    					<div class="col-lg-10">
+    						<select class="form-control" id="team_id_input" name='team_id_input'>
+    							{% for team in teams %}
+    								<option value="{{ team.team_id }}">
+    									{{ team.name }}
+    								</option>
+								{% endfor %}
+								<option value='None' selected>Choose Team</option>
+							</select>
+					    </div>
+				    </div>
+					<div class='form-group'>
+						<label for='started_input' class='col-md-2 control-label'>Started:</label>
+						<div class='col-md-10'>
+							<input type='date' id='started_input' class='form-control' required>
+						</div>
+					</div>
+					<div class="form-group">
+    					<div class="col-lg-10 col-lg-offset-2">
+    						<button type="submit" class="btn btn-primary">Add New Player</button>
+    					</div>
+    				</div>
+    			</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}

@@ -1,15 +1,19 @@
 {% extends 'html/web_base.html' %}
 {% block content %}
-
-    <h2>Leagues</h2>
-    <ul>
-      {% for league in leagues %}
-          <li>
-              <a href="/league_profile/{{ league.league_id }}">
-                {{ league.name }} ({{ league.affiliation }}) -- {{ league.location }}
-              </a>
-          </li>
-      {% endfor %}
-    </ul>
-
+<div class='container'>
+  <div class='row'>
+    <div class='col-md-8 col-md-offset-2'>
+      <h2>Leagues</h2>
+      <ul>
+        {% for league in leagues %}
+            <li>
+                <a href="/league/{{ league.league_id }}">
+                  {{ league.name }} ({{ league.affiliation }}) -- {{ league.location }}
+                </a>
+            </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
 {% endblock %}

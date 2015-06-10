@@ -1,27 +1,55 @@
 {% extends 'html/web_base.html' %}
 {% block content %}
-
-<h1>Create New League</h1>
-
-<form action="/new_league" method="POST">
-	Name: <input type='text' name='name_input' required> 
-	Affiliation: 
-		<select name='affiliation_input'>
-			<option value='WFTDA'>WFTDA</option>
-			<option value='WFTDA_A'>WFTDA Apprentice</option>
-			<option value='USARS'>USARS</option>
-			<option value='JRDA'>JRDA</option>
-			<option value='UKRDA'>UKRDA</option>
-			<option value='MRDA'>MRDA</option>
-			<option value='RDAC'>RDAC</option>
-			<option value='MADE'>MADE</option>
-			<option value='None' selected></option>
-		</select><br>
-	Location: <input type='text' name='location_input' required><br>
-	Founded: <input type='date' name='founded_input' required><br>
-		<br>
-	<input type='submit' value='Add New League'>
-</form>
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-8 col-md-offset-2'>
+			<form action="/new_league" method="POST" class='form-horizontal'>
+				<fieldset>
+					<legend>Create New League</legend>
+					<div class='form-group'>
+						<label for='name_input' class='col-md-2 control-label'>Name:</label>
+						<div class='col-md-10'>
+							<input type='text' id='name_input' placeholder='League Name' class='form-control' required>
+						</div>
+					</div>
+					<div class="form-group">
+    					<label for="affiliation_input" class="col-lg-2 control-label">Affiliation:</label>
+    					<div class="col-lg-10">
+    						<select class="form-control" id="affiliation_input" name='affiliation_input'>
+    							<option value='WFTDA'>WFTDA</option>
+								<option value='WFTDA_A'>WFTDA Apprentice</option>
+								<option value='USARS'>USARS</option>
+								<option value='JRDA'>JRDA</option>
+								<option value='UKRDA'>UKRDA</option>
+								<option value='MRDA'>MRDA</option>
+								<option value='RDAC'>RDAC</option>
+								<option value='MADE'>MADE</option>
+								<option value='None' selected></option>
+							</select>
+					    </div>
+				    </div>
+				    <div class='form-group'>
+						<label for='location_input' class='col-md-2 control-label'>Location:</label>
+						<div class='col-md-10'>
+							<input type='text' id='location_input' placeholder='League Location' class='form-control' required>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label for='founded_input' class='col-md-2 control-label'>Founded:</label>
+						<div class='col-md-10'>
+							<input type='date' id='founded_input' class='form-control' required>
+						</div>
+					</div>
+					<div class="form-group">
+    					<div class="col-lg-10 col-lg-offset-2">
+    						<button type="submit" class="btn btn-primary">Add New League</button>
+    					</div>
+    				</div>
+    			</fieldset>
+			</form>
+		</div>
+	</div>
+</div>
 
 
 {% endblock %}

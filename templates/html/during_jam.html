@@ -4,18 +4,32 @@
 
     <div class='row'>
         <div class='col-md-5 home'>
-            <h2 id='home_team_info' data-color="{{ session['home_team']['color'] }}">{{ session['home_team']['team_name'] }}</h2>
+            <div class='row'>
+                <div class='col-md-10'>
+                    <h2 id='home_team_info' data-color="{{ session['home_team']['color'] }}">{{ session['home_team']['team_name'] }}</h2>
+                </div>
+                <div class='col-md-2' hidden>
+                    <div id='home_score'><h2>{{ session['home_score'] }}</h2></div>
+                </div>
+            </div>
         </div>
         <div class='col-md-2 center'>
-            <div class='timer' name='timer'>
+            <div class='duringjamtimer' name='timer'>
                 <p id='clockface'>00:00.000</p>
             </div>
-            <div class='timer' name='timer'>
+            <div class='duringjamtimer' name='timer'>
                 <p id='jamtimer' hidden>02:00.000</p>
             </div>
         </div>
         <div class='col-md-5 away'>
-            <h2 id='away_team_info' data-color="{{ session['away_team']['color'] }}">{{ session['away_team']['team_name'] }}</h2>
+            <div class='row'>
+                <div class='col-md-2' hidden>
+                    <div id='away_score'><h2>{{ session['away_score'] }}</h2></div>
+                </div>
+                <div class='col-md-10'>
+                    <h2 id='away_team_info' data-color="{{ session['away_team']['color'] }}">{{ session['away_team']['team_name'] }}</h2>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -32,6 +46,11 @@
         <div id='timeranout' hidden>
             <form action='/jam_end/timeranout' method='POST'>
                 <input class='timeranout' type='submit' value='Assign Next Jam'>
+            </form>
+        </div>
+        <div id='calledbyjammer' hidden>
+            <form action='/jam_end/calledbyjammer' method='POST'>
+                <input class='calledbyjammer' type='submit' value='Jam called... Assign Next Jam'>
             </form>
         </div>
     </div>
@@ -65,6 +84,7 @@
                     <span class='player_name'>{{ jammer.name }}</span>
                 </div>
                 <div id='jammer_actions' class='actions'></div>
+                <div hidden id='jam_pivot' class='pivot' data-playerid='{{pivot.player_id}}'>Pivot {{ pivot.name }}</div>
             </div>
         </div>
     </div>
@@ -92,9 +112,20 @@
         <div class='col-md-4'>
             <div id='away_jammer' class='control away jammer' data-playerid='{{away_jammer.player_id}}'>
                 <div id='away_jammer_player' class='player'>
-                    <span class='position'>Opposing Jammer</h3>
+                    <span class='position'>Opposing Jammer</span><br>
                     <span class='player_number'>{{ away_jammer.number }}</span><br>
                     <span class='player_name'>{{ away_jammer.name }}</span>
+                </div>
+                <div id='away_jammer_actions' class='actions'></div>
+                <div hidden id='jamawaypivot' class='pivot' data-playerid='{{away_pivot.player_id}}'>Away Pivot {{ away_pivot.name }}</div>
+            </div>
+        </div>
+        <div class='col-md-4' hidden>
+            <div id='away_pivot' class='control away blocker' data-playerid='{{away_pivot.player_id}}'>
+                <div id='away_pivot_player' class='player'>
+                    <span class='position'>Pivot</h3>
+                    <span class='player_number'>{{ away_pivot.number }}</span><br>
+                    <span class='player_name'>{{ away_pivot.name }}</span>
                 </div>
                 <div id='away_jammer_actions' class='actions'></div>
             </div>

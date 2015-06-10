@@ -1,0 +1,17 @@
+{% extends 'html/web_base.html' %}
+{% block content %}
+<div class='container'>
+  <div class='row'>
+    <div class='col-md-8 col-md-offset-2'>
+      <h2>Games</h2>
+      <ul>
+        {% for date, location, event, g_type, floor, roster_id, game_id, opponent in games %}
+            <li>
+              {{ date }} in {{ location }} vs {{ opponent }}
+            </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

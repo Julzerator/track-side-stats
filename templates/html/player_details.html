@@ -1,14 +1,19 @@
 {% extends 'html/web_base.html' %}
 {% block content %}
+<div class='container'>
+  <div class='row'>
+    <div class='col-md-8 col-md-offset-2'>
+	    <h2>Player Details</h2>
 
-    <h2>Player Details</h2>
-
-    <div name="player_details">
-      Name: {{ player.name }} <br>
-      Number: {{ player.number }} <br>
-      Legal Name: {{ player.legal_fname }} {{ player.legal_lname }} <br>
-      Started: {{ player.started }} <br>
-      Retired: {{ player.retired }} <br>
+	    <div name="player_details">
+	      Name: {{ player.name }} <br>
+	      Number: {{ player.number }} <br>
+	      Legal Name: {{ player.legal_fname }} {{ player.legal_lname }} <br>
+	      Started: {{ player.started }} <br>
+	      Retired: {{ player.retired }} <br>
+	    </div>
     </div>
+  </div>
+</div>
 
 {% endblock %}

@@ -1,38 +1,43 @@
 {% extends 'html/web_base.html' %}
 {% block content %}
+<div class='container'>
+  <div class='row'>
+    <div class='col-md-8 col-md-offset-2'>
+      <h2>League Details</h2>
 
-    <h2>League Details</h2>
-
-    <div name="league_details">
-      Name: {{ league.name }} <br>
-      Affiliation: {{ league.affiliation }} <br>
-      Location: {{ league.location }} <br>
-      Founded: {{ league.founded }} <br>
-      Disbanded: {{ league.disbanded }} <br>
+      <div name="league_details">
+        Name: {{ league.name }} <br>
+        Affiliation: {{ league.affiliation }} <br>
+        Location: {{ league.location }} <br>
+        Founded: {{ league.founded }} <br>
+        Disbanded: {{ league.disbanded }} <br>
+      </div>
+      <div name="league_teams">
+        <h3>Teams associated with the league</h3>
+        <ul>
+          {% for team in league_teams %}
+            <li>
+                <a href="/team/{{ team.team_id }}">
+                  {{ team.name }} ({{ team.t_type }})
+                </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div name="league_players">
+        <h3>Players associated with the league</h3>
+        <ul>
+          {% for player in league_players %}
+            <li>
+                <a href="/player_details/{{ player.player_id }}">
+                  {{ player.number }} - {{ player.name }}
+                </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
-    <div name="league_teams">
-      <h3>Teams associated with the league</h3>
-      <ul>
-        {% for team in league_teams %}
-          <li>
-              <a href="/team_details/{{ team.team_id }}">
-                {{ team.name }} ({{ team.t_type }})
-              </a>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
-    <div name="league_players">
-      <h3>Players associated with the league</h3>
-      <ul>
-        {% for player in league_players %}
-          <li>
-              <a href="/player_details/{{ player.player_id }}">
-                {{ player.number }} - {{ player.name }}
-              </a>
-          </li>
-        {% endfor %}
-      </ul>
-    </div>
+  </div>
+</div>
 
 {% endblock %}

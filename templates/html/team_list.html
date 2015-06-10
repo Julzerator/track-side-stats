@@ -1,15 +1,19 @@
 {% extends 'html/web_base.html' %}
 {% block content %}
-
-    <h2>Teams</h2>
-    <ul>
-      {% for team in teams %}
-          <li>
-              <a href="/team/{{ team.team_id }}">
-                {{ team.name }} ({{ team.t_type }})
-              </a>
-          </li>
-      {% endfor %}
-    </ul>
-
+<div class='container'>
+  <div class='row'>
+    <div class='col-md-8 col-md-offset-2'>
+      <h2>Teams</h2>
+      <ul>
+        {% for team in teams %}
+            <li>
+                <a href="/team/{{ team.team_id }}">
+                  {{ team.name }} ({{ team.t_type }})
+                </a>
+            </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
 {% endblock %}

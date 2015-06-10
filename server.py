@@ -8,6 +8,7 @@ from datetime import datetime
 from model import (connect_to_db, db, User, LeagueUser, Team, Player, 
                   TeamPlayer, League, Roster, RosterPlayer, Game,
                   Jam, JamPosition, Action)
+from random import randint
 
 
 app = Flask(__name__)
@@ -27,7 +28,9 @@ def index():
     Homepage.
     """
 
-    return render_template('html/index.html')
+    imgnum = randint(1,9)
+
+    return render_template('html/index.html', imgnum=imgnum)
 
 
 @app.route('/to_signup')
@@ -150,7 +153,7 @@ def new_league():
             return redirect("/leagues")
 
     else:
-        return render_template("/league.html")
+        return render_template("/html/league.html")
 
 
 @app.route('/league/<int:league_id>')
@@ -167,7 +170,7 @@ def league_details(league_id):
     for team in league_teams:
         league_players.extend(team.players)
 
-    return render_template("league_details.html", league=league,
+    return render_template("html/league_details.html", league=league,
         league_teams = league_teams, league_players = league_players)
 
 
@@ -178,7 +181,7 @@ def league_list():
 
     leagues = League.query.all()
 
-    return render_template("league_list.html", leagues=leagues)
+    return render_template("html/league_list.html", leagues=leagues)
 
 
 @app.route('/new_team', methods=['GET', 'POST'])
@@ -217,20 +220,50 @@ def new_team():
             return redirect("/teams")
 
     else:
-        return render_template("/team.html")
+        return render_template("html/team.html")
 
 
 @app.route('/team/<int:team_id>')
 def team_details(team_id):
     """ Displays the details of a Team. """
-    # In testing
     
     team = Team.query.filter_by(team_id = team_id).first_or_404()
+    games = db.session.query(
+                            Game.date, 
+                            Game.location, 
+                            Game.event_name,
+                            Game.g_type,
+                            Game.floor,
+                            Roster.roster_id,
+                            Roster.game_id,
+                            Roster.ordinal)\
+            .join(Roster)\
+            .filter(Roster.team_id == team_id)\
+            .order_by(Game.date).all()
+
+    games_with_opponents = []
+
+    for game in games:
+        opponent = ''
+        (date, location, event, g_type, floor, roster_id, game_id, ordinal) = game
+        if ordinal == 1:
+            opponent = db.session.query(Team.name)\
+            .join(Roster)\
+            .filter(Roster.game_id == game_id, Roster.ordinal == 2).one()
+            print opponent
+        elif ordinal == 2:
+            opponent = db.session.query(Team.name)\
+            .join(Roster)\
+            .filter(Roster.game_id == game_id, Roster.ordinal == 1).one()
+            print opponent
+
+        game = (date, location, event, g_type, floor, roster_id, game_id, opponent)
+        games_with_opponents.append(game)
 
     team_players = team.players
 
     return render_template("html/team_details.html", team=team,
-        team_players = team_players)
+        team_players=team_players, games=games_with_opponents)
 
 
 @app.route('/teams')
@@ -282,41 +315,60 @@ def new_player():
         legal_lname = request.form["lname_input"]
         number = request.form["number_input"]
         started = request.form["started_input"]
+        team_id = request.form["team_id_input"]
 
-        # Check to see if there is another player with that
-        # exact name / number combo.
-
-        players = db.session.query(Player)
-        player_check = players.filter(Player.name == name,
-            Player.number == number)
-
-        if player_check.first() == None:
-            new_player = Player(name=name,
+        new_player = Player(name=name,
                 legal_fname=legal_fname,
                 legal_lname=legal_lname,
                 number=number,
                 started=started)
 
-            db.session.add(new_player)
+        db.session.add(new_player)
+        db.session.commit()
+
+        if team_id:
+            new_teapla = TeamPlayer(player_id=new_player.player_id,
+                team_id=int(team_id))
+            db.session.add(new_teapla)
             db.session.commit()
 
-        else:
-            existing_player = player_check.first()
-            # Return that the player already exists
-            # Show the player name, number, location, and team (if available)
+        # # Check to see if there is another player with that
+        # # exact name / number combo.
 
-        # team_id = request.form["team_id"]
+        # players = db.session.query(Player)
+        # player_check = players.filter(Player.name == name,
+        #     Player.number == number)
 
-        # if team_id != None:
-        #     newest_player = players.filter(Player.name == name,
-        #     Player.number == number).first()
-        #     teamplayer = TeamPlayer(team_id=team_id,
-        #         player_id=newest_player.player_id)
+        # if player_check.first() == None:
+        #     new_player = Player(name=name,
+        #         legal_fname=legal_fname,
+        #         legal_lname=legal_lname,
+        #         number=number,
+        #         started=started)
 
-        return redirect("/")
+        #     db.session.add(new_player)
+        #     db.session.commit()
+
+        # else:
+        #     existing_player = player_check.first()
+        #     # Return that the player already exists
+        #     # Show the player name, number, location, and team (if available)
+
+        # # team_id = request.form["team_id"]
+
+        # # if team_id != None:
+        # #     newest_player = players.filter(Player.name == name,
+        # #     Player.number == number).first()
+        # #     teamplayer = TeamPlayer(team_id=team_id,
+        # #         player_id=newest_player.player_id)
+        
+        flash("New Player Added!")
+
+        return redirect("/players")
 
     else:
-        return render_template("html/player_list.html")
+        teams = Team.query.all()
+        return render_template("html/player.html", teams=teams)
 
 
 @app.route('/players')
@@ -418,6 +470,9 @@ def new_game():
                                 'roster_id' : away.roster_id,
                                 'color' : away_color
         }
+
+        session['away_score'] = 0
+        session['home_score'] = 0
 
         flash("Game Created!")
 
@@ -554,6 +609,42 @@ def remove_from_roster(rospla_id):
     db.session.commit()
 
     return redirect("/game_setup")
+
+
+@app.route('/games')
+def list_games():
+    games = db.session.query(
+                            Game.date, 
+                            Game.location, 
+                            Game.event_name,
+                            Game.g_type,
+                            Game.floor,
+                            Roster.roster_id,
+                            Roster.game_id,
+                            Roster.ordinal)\
+            .join(Roster)\
+            .order_by(Game.date).all()
+
+    games_with_opponents = []
+
+    for game in games:
+        opponent = ''
+        (date, location, event, g_type, floor, roster_id, game_id, ordinal) = game
+        if ordinal == 1:
+            home = db.session.query(Team.name)\
+            .join(Roster)\
+            .filter(Roster.game_id == game_id, Roster.ordinal == 2).one()
+            print opponent
+        elif ordinal == 2:
+            opponent = db.session.query(Team.name)\
+            .join(Roster)\
+            .filter(Roster.game_id == game_id, Roster.ordinal == 1).one()
+            print opponent
+
+        game = (date, location, event, g_type, floor, roster_id, game_id, opponent)
+        games_with_opponents.append(game)
+
+    return render_template("/html/game_list.html", games=games_with_opponents)
 
 
 @app.route('/change_roster/add/<int:roster_id>/<int:player_id>')
@@ -826,10 +917,50 @@ def record_action():
                     play=play
                     )
         db.session.add(action)
+
+        pivot_id = int(request.form['pivot_id'])
+
+        print "+" * 80
+        print "Player = %s" % player_id
+        print "Pivot = %s" % pivot_id
+
+        if pivot_id != 'Not Recorded':
+            pivot_jammer = add_jamposition(jam_id, 'jammer starpass', pivot_id)
+            db.session.add(pivot_jammer)
+
+        jammer_pivot = add_jamposition(jam_id, 'blocker starpass', player_id)
+        db.session.add(jammer_pivot)
+
         db.session.commit()
 
-        message = "Star Pass Recorded for %s" % player.name
-        return message
+        if pivot_id != 'Not Recorded':
+            pivot_jammer_dom = Player.query.get(pivot_id)
+        jammer_blocker_dom = Player.query.get(player_id)
+
+        print "=" * 80
+        print "New Jammer = %s" % pivot_jammer_dom
+        print "New Blocker = %s" % jammer_blocker_dom
+
+        message = "Star Pass Recorded for %s" % jammer_blocker_dom.name
+
+        if pivot_id != 'Not Recorded':
+            new_jammer = {'id':pivot_jammer_dom.player_id,
+                          'name':pivot_jammer_dom.name,
+                          'number':pivot_jammer_dom.number}
+        else:
+            new_jammer = {'id': 1,
+                          'name': 'Not Recorded',
+                          'number': 'Not Recorded'}
+
+        starpass = {
+            'message' : message,
+            'new_jammer' : new_jammer,
+            'new_pivot' : {'id':jammer_blocker_dom.player_id,
+                           'name':jammer_blocker_dom.name,
+                           'number':jammer_blocker_dom.number}
+        }
+        
+        return jsonify(starpass)
 
     elif play == 'leadjam':
         action = Action(jam_id=jam_id,
@@ -854,8 +985,6 @@ def record_action():
         return message
 
     elif play == 'points':
-        print "*" * 80
-        print "I made it here"
         points = int(request.form['points'])
         action = Action(jam_id=jam_id,
                     player_id=player_id,
@@ -866,7 +995,77 @@ def record_action():
         db.session.commit()
 
         message = "%s Points Recorded for %s" % (points, player.name)
-        return message
+
+        game = session.get('game')
+        game_id = game['game_id']
+        print "game_id"
+        print game_id
+        away = session.get('away_team')
+        away_roster_id = away['roster_id']
+        print "away roster_id"
+        print away_roster_id
+        points_q = Action.query.filter(Action.points != None).all()
+        print points_q
+
+        # away_score_q = db.session.query(Action.points)\
+        #     .join(Jam)\
+        #     .join(Game)\
+        #     .join(Roster)\
+        #     .join(RosterPlayer)\
+        #     .filter(Roster.game_id == game_id, 
+        #         RosterPlayer.roster_id == away_roster_id,
+        #         Roster.ordinal == 2).all()
+        
+        away_score = 0
+        # for score in away_score_q:
+        #     if score[0] != None:
+        #         print score
+        #         # score = int(score)
+        #         away_score.append(score[0])
+        # away_score = sum(away_score)
+
+        
+        # print "&" * 80
+        # print "away score"
+        # print away_score_q
+        # print away_score
+
+        session['away_score'] = away_score
+
+        home = session.get('home_team')
+        home_roster_id = home['roster_id']
+        print "home roster_id"
+        print home_roster_id
+        # home_score_q = db.session.query(Action.points)\
+        #     .join(Jam)\
+        #     .join(Game)\
+        #     .join(Roster)\
+        #     .join(RosterPlayer)\
+        #     .filter(Roster.game_id == game_id, 
+        #         RosterPlayer.roster_id == home_roster_id, 
+        #         Roster.ordinal == 1).all()
+
+        home_score = 0
+        # for score in home_score_q:
+        #     if score[0] != None:
+        #         print score
+        #         home_score.append(score[0])
+        # home_score = sum(home_score)
+
+        # print "&" * 80
+        # print "home score"
+        # print home_score_q
+        # print home_score
+
+        session['home_score'] = home_score
+
+        points_update = {
+            'message' : message,
+            'home_score' : home_score,
+            'away_score' : away_score
+        }
+
+        return jsonify(points_update)
 
     elif play == 'initialpass':
         action = Action(jam_id=jam_id,
