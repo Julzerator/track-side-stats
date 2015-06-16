@@ -272,9 +272,7 @@ $('.points_number').on('click', function(){
         points : points
         })
         .done(function( result ) {
-            $('#message').html(result.message).show().fadeOut( 3000 );
-            $('#home_score').html("<h2>" + result.home_score + "</h2>");
-            $('#away_score').html("<h2>" + result.away_score + "</h2>");
+            $('#message').html(result).show().fadeOut( 3000 );
         })
         .fail(function() {
             $('#message').html('Action was not processed').show().fadeOut( 3000 );
@@ -311,3 +309,6 @@ $('.searchplayer').on('click', searchPlayer);
 function searchPlayer(evt) {
     alert('I want to search for the right player!');
 }
+
+// Columnizer for Player List
+$('#player_list').columnize({columns: 4 })

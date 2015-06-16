@@ -376,7 +376,7 @@ def player_list():
     """Displaying a list of all teams"""
     # In testing
 
-    players = Player.query.all()
+    players = Player.query.order_by(Player.name).all()
 
     return render_template("html/player_list.html", players=players)
 
@@ -985,6 +985,8 @@ def record_action():
         return message
 
     elif play == 'points':
+        print "*" * 80
+        print "I made it here"
         points = int(request.form['points'])
         action = Action(jam_id=jam_id,
                     player_id=player_id,
@@ -995,77 +997,7 @@ def record_action():
         db.session.commit()
 
         message = "%s Points Recorded for %s" % (points, player.name)
-
-        game = session.get('game')
-        game_id = game['game_id']
-        print "game_id"
-        print game_id
-        away = session.get('away_team')
-        away_roster_id = away['roster_id']
-        print "away roster_id"
-        print away_roster_id
-        points_q = Action.query.filter(Action.points != None).all()
-        print points_q
-
-        # away_score_q = db.session.query(Action.points)\
-        #     .join(Jam)\
-        #     .join(Game)\
-        #     .join(Roster)\
-        #     .join(RosterPlayer)\
-        #     .filter(Roster.game_id == game_id, 
-        #         RosterPlayer.roster_id == away_roster_id,
-        #         Roster.ordinal == 2).all()
-        
-        away_score = 0
-        # for score in away_score_q:
-        #     if score[0] != None:
-        #         print score
-        #         # score = int(score)
-        #         away_score.append(score[0])
-        # away_score = sum(away_score)
-
-        
-        # print "&" * 80
-        # print "away score"
-        # print away_score_q
-        # print away_score
-
-        session['away_score'] = away_score
-
-        home = session.get('home_team')
-        home_roster_id = home['roster_id']
-        print "home roster_id"
-        print home_roster_id
-        # home_score_q = db.session.query(Action.points)\
-        #     .join(Jam)\
-        #     .join(Game)\
-        #     .join(Roster)\
-        #     .join(RosterPlayer)\
-        #     .filter(Roster.game_id == game_id, 
-        #         RosterPlayer.roster_id == home_roster_id, 
-        #         Roster.ordinal == 1).all()
-
-        home_score = 0
-        # for score in home_score_q:
-        #     if score[0] != None:
-        #         print score
-        #         home_score.append(score[0])
-        # home_score = sum(home_score)
-
-        # print "&" * 80
-        # print "home score"
-        # print home_score_q
-        # print home_score
-
-        session['home_score'] = home_score
-
-        points_update = {
-            'message' : message,
-            'home_score' : home_score,
-            'away_score' : away_score
-        }
-
-        return jsonify(points_update)
+        return message
 
     elif play == 'initialpass':
         action = Action(jam_id=jam_id,
@@ -1118,6 +1050,6 @@ if __name__ == "__main__":
     # Use the DebugToolbar
     DebugToolbarExtension(app)
 
-    app.run(host='0.0.0.0')
+    app.run()
 
 

@@ -14,6 +14,7 @@ o- Add Game Views
 o- Hook up routes to Game Views
 o- Add the search_players functionality
 o- Add the search_teams functionality
+o- Take number out of the Player model. Maybe set as a "primary number" but allow number changes during the roster set-up page? Or maybe query the last number used? Both would work.
 
 ===DONE===
 
